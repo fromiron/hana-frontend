@@ -7,7 +7,7 @@ const LoginPage: NextPage = () => {
     return (
         <Layout>
             <div className='relative w-screen h-screen'>
-                <div className="absolute inset-0 bg-amber-400 flex justify-center items-center">
+                <div className="absolute inset-0 bg-black flex justify-center items-center">
                     <LoginForm/>
                 </div>
             </div>
