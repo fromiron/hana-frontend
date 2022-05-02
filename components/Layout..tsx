@@ -4,7 +4,7 @@ import {LayoutInterface} from "../interfaces"
 
 export default function Layout({title, keywords, description, children}: LayoutInterface) {
     return (
-        <>
+        <div>
             <div>
                 <Head>
                     <title>{title}</title>
@@ -13,8 +13,10 @@ export default function Layout({title, keywords, description, children}: LayoutI
                     <meta name="keywords" content={keywords}/>
                 </Head>
             </div>
-            <div>{children}</div>
-        </>
+            <div className="container bg-white">
+                {children}
+            </div>
+        </div>
     );
 }
 

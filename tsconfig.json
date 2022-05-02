@@ -20,9 +20,11 @@
       "@/styles/*": ["styles/*"],
       "@/config/*": ["config/*"],
       "@/helpers/*": ["helpers/*"],
-      "@/interfaces/*": ["interfaces/*"]
+      "@/interfaces/*": ["interfaces/*"],
+      "@/public/*": ["public/*"],
+      "@/store/*": ["store/*"],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.svg", "**/*.png"],
   "exclude": ["node_modules"]
 }
