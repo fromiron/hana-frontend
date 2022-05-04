@@ -4,7 +4,7 @@ import React from "react";
 
 const ReservationsPage: NextPage = () => {
     return (
-        <Layout title={'Reservations - Rabbit Sitter Hana'}>
+        <Layout title={'Reservations - Rabbit Sitter Hana'} pageTitle={'Reservations'}>
             <h1>ReservationsPage</h1>
         </Layout>
     )

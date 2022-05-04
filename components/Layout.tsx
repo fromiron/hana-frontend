@@ -13,8 +13,9 @@ import Image from "next/image";
 import IconMenuItem from "@/components/partials/IconMenuItem";
 import Logo from "@/public/logo.svg";
 import {useRouter} from "next/router";
+import PageTitle from "@/components/partials/PageTitle";
 
-export default function Layout({title, keywords, description, children}: LayoutInterface) {
+export default function Layout({title, keywords, description, children, pageTitle}: LayoutInterface) {
     const router = useRouter();
     const handleRoute = (url: string) => {
         //TODO token check
@@ -69,7 +70,10 @@ export default function Layout({title, keywords, description, children}: LayoutI
                         </ul>
 
                     </div>
-                    <div>{children}</div>
+                    <div className='p-10'>
+                        <PageTitle pageTitle={pageTitle} />
+                        {children}
+                    </div>
                 </div>
 
             </div>

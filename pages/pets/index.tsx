@@ -4,7 +4,7 @@ import React from "react";
 
 const PetsPage: NextPage = () => {
     return (
-        <Layout title={'Pets - Rabbit Sitter Hana'}>
+        <Layout title={'Pets - Rabbit Sitter Hana'} pageTitle={'Pets'}>
             <h1>PetsPage</h1>
         </Layout>
     )
