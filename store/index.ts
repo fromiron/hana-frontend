@@ -1,5 +1,5 @@
 import {atom} from "recoil";
-import {loginStateInterface} from "@/interfaces/index";
+import {loginStateInterface, PagePropsInterface} from "@/interfaces/index";
 
 export const loginState = atom<loginStateInterface>({
     key: 'loginState',
@@ -8,5 +8,12 @@ export const loginState = atom<loginStateInterface>({
         emailError: false,
         password: '',
         passwordError: false,
+    },
+});
+
+export const pageState = atom<PagePropsInterface>({
+    key: 'pageState',
+    default: {
+        page: 'overview',
     },
 });

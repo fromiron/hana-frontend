@@ -1,6 +1,6 @@
 import React from "react";
 import Head from "next/head";
-import {LayoutInterface} from "../interfaces"
+import {LayoutInterface, loginStateInterface, PagePropsInterface} from "../interfaces"
 import {
     MdOutlineLibraryBooks,
     MdPeople,
@@ -14,9 +14,13 @@ import IconMenuItem from "@/components/partials/IconMenuItem";
 import Logo from "@/public/logo.svg";
 import {useRouter} from "next/router";
 import PageTitle from "@/components/partials/PageTitle";
+import {useRecoilState} from "recoil";
+import {pageState} from "@/store/index";
 
 export default function Layout({title, keywords, description, children, pageTitle}: LayoutInterface) {
     const router = useRouter();
+    const [state, setState] = useRecoilState<PagePropsInterface>(pageState);
+
     const handleRoute = (url: string) => {
         //TODO token check
         router.push(url)
@@ -71,8 +75,10 @@ export default function Layout({title, keywords, description, children, pageTitl
 
                     </div>
                     <div className='p-10'>
-                        <PageTitle pageTitle={pageTitle} />
-                        {children}
+                        <PageTitle pageTitle={pageTitle}/>
+                        <div className='mt-10'>
+                            {children}
+                        </div>
                     </div>
                 </div>
 

@@ -1,12 +1,15 @@
 import React from "react";
 import {IconType} from "react-icons/lib";
-import exp from "constants";
 
-export interface LayoutInterface {
+
+export interface AccountInterface {
     title: string,
     keywords: string,
     description: string,
     children: any,
+}
+
+export interface LayoutInterface extends AccountInterface{
     pageTitle: string,
 }
 
@@ -43,4 +46,8 @@ export interface IconMenuInterface {
     Icon: IconType,
     title: string,
     onClick:React.MouseEventHandler<HTMLLIElement>
+}
+
+export interface PagePropsInterface {
+    page: string,
 }

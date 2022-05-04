@@ -1,8 +1,8 @@
 import React from "react";
 import Head from "next/head";
-import {LayoutInterface} from "../interfaces"
+import {AccountInterface} from "../interfaces"
 
-export default function AccountLayout({title, keywords, description, children}: LayoutInterface) {
+export default function AccountLayout({title, keywords, description, children}: AccountInterface) {
     return (
         <div>
             <div>
