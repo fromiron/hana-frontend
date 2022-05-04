@@ -2,14 +2,14 @@ import type {NextPage} from 'next'
 import Layout from "@/components/Layout";
 import React from "react";
 
-const DashboardPage: NextPage = () => {
+const PetsPage: NextPage = () => {
     return (
-        <Layout title={'Dashboard - Rabbit Sitter Hana'}>
-
+        <Layout title={'Pets - Rabbit Sitter Hana'}>
+            <h1>PetsPage</h1>
         </Layout>
     )
 }
 
 
-export default DashboardPage
+export default PetsPage
 

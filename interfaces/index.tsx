@@ -37,3 +37,9 @@ export interface loginPropsInterface {
     handleLogin: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
     state: loginStateInterface
 }
+
+export interface IconMenuInterface {
+    Icon: IconType,
+    title: string,
+    onClick:React.MouseEventHandler<HTMLLIElement>
+}

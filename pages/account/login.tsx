@@ -26,7 +26,7 @@ const LoginPage: NextPage = () => {
 
     const handleLogin = () => {
         handleValidate();
-        router.push('/dashboard');
+        router.push('/overview');
     }
 
     return (

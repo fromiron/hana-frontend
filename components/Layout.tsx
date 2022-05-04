@@ -1,12 +1,25 @@
 import React from "react";
 import Head from "next/head";
 import {LayoutInterface} from "../interfaces"
-import {MdOutlineLibraryBooks, MdPeople, MdOutlinePets, MdCalendarToday, MdSettings, MdOutlineRedo} from "react-icons/md";
+import {
+    MdOutlineLibraryBooks,
+    MdPeople,
+    MdOutlinePets,
+    MdCalendarToday,
+    MdSettings,
+    MdOutlineRedo
+} from "react-icons/md";
 import Image from "next/image";
 import IconMenuItem from "@/components/partials/IconMenuItem";
 import Logo from "@/public/logo.svg";
+import {useRouter} from "next/router";
 
 export default function Layout({title, keywords, description, children}: LayoutInterface) {
+    const router = useRouter();
+    const handleRoute = (url: string) => {
+        //TODO token check
+        router.push(url)
+    }
     return (
         <div>
             <div>
@@ -28,19 +41,19 @@ export default function Layout({title, keywords, description, children}: LayoutI
                             Admin Tools
                         </div>
                         <ul>
-                            <IconMenuItem Icon={MdOutlineLibraryBooks} onClick={() => console.log('Overview')}
+                            <IconMenuItem Icon={MdOutlineLibraryBooks} onClick={() => handleRoute('/overview')}
                                           title={'Overview'}/>
 
-                            <IconMenuItem Icon={MdPeople} onClick={() => console.log('Customers')}
+                            <IconMenuItem Icon={MdPeople} onClick={() => handleRoute('/customers')}
                                           title={'Customers'}/>
 
-                            <IconMenuItem Icon={MdOutlinePets} onClick={() => console.log('Pets')}
+                            <IconMenuItem Icon={MdOutlinePets} onClick={() => handleRoute('/pets')}
                                           title={'Pets'}/>
 
-                            <IconMenuItem Icon={MdCalendarToday} onClick={() => console.log('Reservations')}
+                            <IconMenuItem Icon={MdCalendarToday} onClick={() => handleRoute('/reservations')}
                                           title={'Reservations'}/>
 
-                            <IconMenuItem Icon={MdSettings} onClick={() => console.log('Settings')}
+                            <IconMenuItem Icon={MdSettings} onClick={() => handleRoute('/settings')}
                                           title={'Settings'}/>
                         </ul>
                         <div className='border-b border-mono-100'/>
