@@ -1,5 +1,6 @@
 import React from "react";
 import {IconType} from "react-icons/lib";
+import exp from "constants";
 
 export interface LayoutInterface {
     title: string,
@@ -28,4 +29,11 @@ export interface loginStateInterface {
     emailError: boolean,
     password: string,
     passwordError: boolean
+}
+
+export interface loginPropsInterface {
+    handleEmailChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+    handlePasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+    handleLogin: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+    state: loginStateInterface
 }
