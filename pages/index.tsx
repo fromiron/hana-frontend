@@ -1,14 +1,14 @@
 import type {NextPage} from 'next'
-import Layout from "@/components/Layout";
 import Link from 'next/link';
+import AccountLayout from "@/components/AccountLayout";
 
 const HomePage: NextPage = () => {
     return (
-        <Layout>
+        <AccountLayout>
             <Link href='/account/login'>
                 <a>login page</a>
             </Link>
-        </Layout>
+        </AccountLayout>
     )
 }
 

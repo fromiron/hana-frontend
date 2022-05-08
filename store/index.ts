@@ -1,13 +1,14 @@
 import {atom} from "recoil";
-import {loginStateInterface, PagePropsInterface} from "@/interfaces/index";
+import {loginApiPropsInterface, loginFormInterface, PagePropsInterface, UserInterface} from "@/interfaces/index";
 
-export const loginState = atom<loginStateInterface>({
-    key: 'loginState',
+
+export const loginFormState = atom<loginFormInterface>({
+    key: 'loginFormState',
     default: {
         email: '',
         emailError: false,
         password: '',
-        passwordError: false,
+        passwordError: false
     },
 });
 
@@ -16,4 +17,18 @@ export const pageState = atom<PagePropsInterface>({
     default: {
         page: 'overview',
     },
+});
+
+export const userState = atom<UserInterface>({
+    key: 'userState',
+    default: {
+        id: 0,
+        username: '',
+        email: '',
+        provider: '',
+        confirmed: false,
+        blocked: true,
+        createdAt: '',
+        updatedAt: ''
+    }
 });

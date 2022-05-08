@@ -23,6 +23,7 @@
       "@/interfaces/*": ["interfaces/*"],
       "@/public/*": ["public/*"],
       "@/store/*": ["store/*"],
+      "@/controllers/*": ["controllers/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.svg", "**/*.png"],
