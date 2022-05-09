@@ -10,13 +10,13 @@
   },
   "dependencies": {
     "@types/cookie": "^0.5.1",
-    "axios": "^0.27.2",
     "cookie": "^0.5.0",
     "framer-motion": "^6.3.3",
     "next": "12.1.5",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-icons": "^4.3.1",
+    "react-toastify": "^9.0.1",
     "recoil": "^0.7.2",
     "typeit-react": "^2.4.3"
   },

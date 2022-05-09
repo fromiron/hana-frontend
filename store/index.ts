@@ -1,5 +1,5 @@
-import {atom} from "recoil";
-import {loginApiPropsInterface, loginFormInterface, PagePropsInterface, UserInterface} from "@/interfaces/index";
+import {atom, selector, useSetRecoilState} from "recoil";
+import {loginFormInterface, PagePropsInterface, UserInterface} from "@/interfaces/index";
 
 
 export const loginFormState = atom<loginFormInterface>({
@@ -15,7 +15,7 @@ export const loginFormState = atom<loginFormInterface>({
 export const pageState = atom<PagePropsInterface>({
     key: 'pageState',
     default: {
-        page: 'overview',
+        name: 'overview',
     },
 });
 
@@ -32,3 +32,10 @@ export const userState = atom<UserInterface>({
         updatedAt: ''
     }
 });
+
+export const userSelector = selector<UserInterface>({
+    key: 'userSelector',
+    get: ({get}) => get(userState),
+    set: ({set}, newValue) => newValue,
+});
+

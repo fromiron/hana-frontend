@@ -3,7 +3,6 @@ import Layout from "@/components/Layout";
 import React from "react";
 import {parseCookies} from "@/helpers/parseCookies";
 import {GetServerSideProps} from "next";
-import {useRouter} from "next/router";
 
 const OverviewPage: NextPage = () => {
     return (

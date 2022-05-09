@@ -43,17 +43,17 @@ export interface loginPropsInterface {
     handlePasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
     handleLogin: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
     loginFormData: loginFormInterface,
-    message:string,
 }
 
 export interface IconMenuInterface {
     Icon: IconType,
     title: string,
+    page: string,
     onClick: React.MouseEventHandler<HTMLLIElement>
 }
 
 export interface PagePropsInterface {
-    page: string,
+    name: string,
 }
 
 export interface UserInterface {

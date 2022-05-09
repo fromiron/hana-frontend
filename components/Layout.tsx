@@ -1,6 +1,6 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Head from "next/head";
-import {LayoutInterface, loginStateInterface, PagePropsInterface} from "../interfaces"
+import {LayoutInterface, PagePropsInterface} from "../interfaces"
 import {
     MdOutlineLibraryBooks,
     MdPeople,
@@ -14,15 +14,40 @@ import IconMenuItem from "@/components/partials/IconMenuItem";
 import Logo from "@/public/logo.svg";
 import {useRouter} from "next/router";
 import PageTitle from "@/components/partials/PageTitle";
-import {useRecoilState} from "recoil";
-import {pageState} from "@/store/index";
+import {useRecoilState, useRecoilValue} from "recoil";
+import {pageState, userState} from "@/store/index";
 
 export default function Layout({title, keywords, description, children, pageTitle}: LayoutInterface) {
     const router = useRouter();
-    const [state, setState] = useRecoilState<PagePropsInterface>(pageState);
+    const [page, setPage] = useRecoilState<PagePropsInterface>(pageState);
+    const user = useRecoilValue(userState);
+    const {isReady} = useRouter();
+
+    const userChecker = () => {
+        if (!user) {
+            console.log("User is not logged in");
+            router.push("/account/login");
+        }
+        if (!user.confirmed) {
+            console.log("User is not confirmed");
+            router.push("/account/login");
+        }
+
+        if (user.blocked) {
+            console.log("User is blocked");
+            router.push("/account/login");
+        }
+    }
+
+
+    useEffect(() => {
+        userChecker();
+    }, [isReady]);
+
 
     const handleRoute = (url: string) => {
-        //TODO token check
+        userChecker();
+        setPage({name: url.replace("/", "")});
         router.push(url)
     }
     return (
@@ -47,19 +72,19 @@ export default function Layout({title, keywords, description, children, pageTitl
                         </div>
                         <ul>
                             <IconMenuItem Icon={MdOutlineLibraryBooks} onClick={() => handleRoute('/overview')}
-                                          title={'Overview'}/>
+                                          title={'Overview'} page={page.name}/>
 
                             <IconMenuItem Icon={MdPeople} onClick={() => handleRoute('/customers')}
-                                          title={'Customers'}/>
+                                          title={'Customers'} page={page.name}/>
 
                             <IconMenuItem Icon={MdOutlinePets} onClick={() => handleRoute('/pets')}
-                                          title={'Pets'}/>
+                                          title={'Pets'} page={page.name}/>
 
                             <IconMenuItem Icon={MdCalendarToday} onClick={() => handleRoute('/reservations')}
-                                          title={'Reservations'}/>
+                                          title={'Reservations'} page={page.name}/>
 
                             <IconMenuItem Icon={MdSettings} onClick={() => handleRoute('/settings')}
-                                          title={'Settings'}/>
+                                          title={'Settings'} page={page.name}/>
                         </ul>
                         <div className='border-b border-mono-100'/>
                         <div className='mt-10 text-xs text-mono-200'>
@@ -67,10 +92,10 @@ export default function Layout({title, keywords, description, children, pageTitl
                         </div>
                         <ul>
                             <IconMenuItem Icon={MdOutlineRedo} onClick={() => console.log('site1')}
-                                          title={'site1'}/>
+                                          title={'site1'} page={'link'}/>
 
                             <IconMenuItem Icon={MdOutlineRedo} onClick={() => console.log('site2')}
-                                          title={'site2'}/>
+                                          title={'site2'} page={'link'}/>
                         </ul>
 
                     </div>
