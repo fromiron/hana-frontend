@@ -1,11 +1,8 @@
 import {atom} from "recoil";
-import {PagePropsInterface} from "@/interfaces/index";
 
 
-export const pageState = atom<PagePropsInterface>({
+export const pageState = atom<string>({
     key: 'pageState',
-    default: {
-        name: 'overview',
-    },
+    default: '',
 });
 

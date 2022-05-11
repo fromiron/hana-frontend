@@ -50,13 +50,10 @@ export interface loginPropsInterface {
 export interface IconMenuInterface {
     Icon: IconType,
     title: string,
-    page: string,
+    page: string|null,
     onClick: React.MouseEventHandler<HTMLLIElement>
 }
 
-export interface PagePropsInterface {
-    name: string,
-}
 
 export interface UserInterface {
     id: number;

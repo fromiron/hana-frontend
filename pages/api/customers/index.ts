@@ -6,9 +6,6 @@ export default async function customers(req: NextApiRequest, res: NextApiRespons
     if (req.method === "GET") {
         const {token} = parseCookies(req);
         if (!token) {
-            console.log('==============================================================================================')
-            console.log("No token");
-            console.log('==============================================================================================')
             return res.status(404).json({'error': 'No token'});
         }
         const strapiRes = await fetch(`${API_URL}/customers`, {

@@ -5,6 +5,7 @@ import React from "react";
 import {dehydrate, QueryClient, useQuery} from "react-query";
 import {queryKeys} from "../../../react-query/constants";
 import {getCustomers} from "@/services/customers";
+import usePage from "@/hooks/usePage";
 
 interface CustomerInterface {
     id: number;
@@ -47,6 +48,7 @@ const CustomersPage: NextPage = () => {
             <td>{customer.attributes.kana}</td>
         </tr>
     ))
+
 
     return (
         <Layout title={'Customers - Rabbit Sitter Hana'} pageTitle={'Customers'}>

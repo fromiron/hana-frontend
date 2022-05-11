@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import Head from "next/head";
-import {LayoutInterface, PagePropsInterface} from "../interfaces"
+import {LayoutInterface} from "../interfaces"
 import {
     MdOutlineLibraryBooks,
     MdPeople,
@@ -19,11 +19,15 @@ import {pageState} from "@/store/index";
 
 export default function Layout({title, keywords, description, children, pageTitle}: LayoutInterface) {
     const router = useRouter();
-    const [page, setPage] = useRecoilState<PagePropsInterface>(pageState);
+    const [page, setPage] = useRecoilState<string>(pageState);
+    console.log(router.asPath.replace('/cms/','').toLowerCase())
 
-    const handleRoute = (url: string) => {
-        setPage({name: url.replace("/", "")});
-        router.push(url)
+    useEffect(() => {
+        setPage(router.asPath.replace('/cms/','').toLowerCase())
+    },[])
+
+    const handleRoute = async (url: string) => {
+        await router.push(url)
     }
     return (
         <div>
@@ -47,19 +51,19 @@ export default function Layout({title, keywords, description, children, pageTitl
                         </div>
                         <ul>
                             <IconMenuItem Icon={MdOutlineLibraryBooks} onClick={() => handleRoute('/cms/overview')}
-                                          title={'Overview'} page={page.name}/>
+                                          title={'Overview'} page={page}/>
 
                             <IconMenuItem Icon={MdPeople} onClick={() => handleRoute('/cms/customers')}
-                                          title={'Customers'} page={page.name}/>
+                                          title={'Customers'} page={page}/>
 
                             <IconMenuItem Icon={MdOutlinePets} onClick={() => handleRoute('/cms/pets')}
-                                          title={'Pets'} page={page.name}/>
+                                          title={'Pets'} page={page}/>
 
                             <IconMenuItem Icon={MdCalendarToday} onClick={() => handleRoute('/cms/reservations')}
-                                          title={'Reservations'} page={page.name}/>
+                                          title={'Reservations'} page={page}/>
 
                             <IconMenuItem Icon={MdSettings} onClick={() => handleRoute('/cms/settings')}
-                                          title={'Settings'} page={page.name}/>
+                                          title={'Settings'} page={page}/>
                         </ul>
                         <div className='border-b border-mono-100'/>
                         <div className='mt-10 text-xs text-mono-200'>
@@ -67,10 +71,10 @@ export default function Layout({title, keywords, description, children, pageTitl
                         </div>
                         <ul>
                             <IconMenuItem Icon={MdOutlineRedo} onClick={() => console.log('site1')}
-                                          title={'site1'} page={'link'}/>
+                                          title={'site1'} page={null}/>
 
                             <IconMenuItem Icon={MdOutlineRedo} onClick={() => console.log('site2')}
-                                          title={'site2'} page={'link'}/>
+                                          title={'site2'} page={null}/>
                         </ul>
 
                     </div>

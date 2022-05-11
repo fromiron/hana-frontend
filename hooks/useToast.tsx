@@ -11,7 +11,6 @@ export default function useToast() {
     async function errorMsg(message: string) {
         await toast.error(message, {
             position: "top-center",
-
         });
     }
 
