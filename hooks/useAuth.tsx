@@ -4,11 +4,21 @@ import {useQuery, useQueryClient} from "react-query";
 import {queryKeys} from "../react-query/constants";
 import useToast from "@/hooks/useToast";
 import {useRouter} from "next/router";
+import {getStorageUser, removeStorageUser, setStorageUser} from "../react-query/userStorage";
 
 
 export function useUser(): UseUserInterface {
     const queryClient = useQueryClient();
-    const {data: user} = useQuery(queryKeys.user, () => getUser(),);
+    const {data: user} = useQuery(queryKeys.user, () => getUser(),{
+        initialData: getStorageUser,
+        onSuccess:(received: UserInterface|null) => {
+            if(!received) {
+                removeStorageUser();
+            }else{
+                setStorageUser(received);
+            }
+        }
+    });
     const {successMsg, errorMsg} = useToast();
     const router = useRouter();
 

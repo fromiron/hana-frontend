@@ -5,7 +5,6 @@ import React from "react";
 import {dehydrate, QueryClient, useQuery} from "react-query";
 import {queryKeys} from "../../../react-query/constants";
 import {getCustomers} from "@/services/customers";
-import {NEXT_API_URL} from "@/config/index";
 
 interface CustomerInterface {
     id: number;
@@ -22,12 +21,24 @@ interface CustomerInterface {
     }
 }
 
+interface CustomersResponse {
+    customers: [CustomerInterface];
+}
+
 
 const CustomersPage: NextPage = () => {
-    const {data, isLoading, refetch} = useQuery(queryKeys.customers, () => getCustomers());
+    const {data, isLoading, isError, refetch} = useQuery(queryKeys.customers, async () => {
+        const res = await getCustomers();
+        if (res.ok) {
+            return res.json()
+        }
+    });
 
     if (isLoading) {
         return <div>Loading...</div>
+    }
+    if (isError) {
+        console.log(isError);
     }
     const customers = data.customers;
 
@@ -77,22 +88,27 @@ const CustomersPage: NextPage = () => {
 export default CustomersPage
 
 
-export const getServerSideProps: GetServerSideProps = async ({req   }) => {
+export const getServerSideProps: GetServerSideProps = async ({req}) => {
     const client = new QueryClient();
-    await client.prefetchQuery(queryKeys.customers, async () => {
-        const response = await fetch(`${NEXT_API_URL}/customers`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
+    try {
+        await client.prefetchQuery<CustomersResponse>(queryKeys.customers, async () => {
+            const res = await getCustomers();
+            if (res.ok) {
+                return res.json()
             }
-        })
-        return await response.json();
-    })
+        });
+    } catch (e) {
+        return {
+            props: {
+                dehydratedState: dehydrate(client)
+            },
+        };
+    }
     return {
-        props: {
-            dehydratedState: dehydrate(client)
-        },
+        props: {},
     };
+
+
 }
 
 

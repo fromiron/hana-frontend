@@ -6,8 +6,8 @@ const getCustomers = async () => {
         headers: {
             'Content-Type': 'application/json',
         }
-    })
-    return await response.json();
+    });
+    return response;
 }
 
 export {getCustomers};

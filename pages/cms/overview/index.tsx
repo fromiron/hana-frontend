@@ -20,18 +20,7 @@ export default OverviewPage
 
 
 
-export const getServerSideProps: GetServerSideProps = async ({req}) => {
-    const isCredentialed = await credentialChecker(req)
-    if (!isCredentialed) {
-        return {
-            redirect: {
-                permanent: false,
-                destination: "/"
-            }
-        }
-    }
-
-
+export const getServerSideProps: GetServerSideProps = async () => {
     return {
         props: {
             'data':'test',
