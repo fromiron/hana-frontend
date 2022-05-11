@@ -1,14 +1,15 @@
 import {API_URL} from "@/config/index";
 import type {NextApiRequest, NextApiResponse} from 'next'
 import {parseCookies} from "@/helpers/parseCookies";
-import cookie from "cookie";
+
 export default async function customers(req: NextApiRequest, res: NextApiResponse) {
+    const query = req.url?.split('?')[1];
     if (req.method === "GET") {
         const {token} = parseCookies(req);
         if (!token) {
             return res.status(404).json({'error': 'No token'});
         }
-        const strapiRes = await fetch(`${API_URL}/customers`, {
+        const strapiRes = await fetch(`${API_URL}/customers?${query}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
