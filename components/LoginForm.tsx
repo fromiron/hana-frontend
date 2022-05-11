@@ -22,7 +22,7 @@ export default function LoginForm({loginFormData, handleEmailChange, handlePassw
                    placeholder={'● ● ● ● ● ●'}
                    onChange={handlePasswordChange}/>
             <div className={'my-2 text-right'}>
-                <Link href='/account/password'><a className={'transition duration-500 ease-in-out hover:text-primary'}>Reset
+                <Link href='/cms/account/password'><a className={'transition duration-500 ease-in-out hover:text-primary'}>Reset
                     Password?</a></Link>
             </div>
             <Button title={'LOGIN'} onClick={handleLogin}/>

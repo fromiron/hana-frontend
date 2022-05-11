@@ -1,7 +1,6 @@
 import cookie from "cookie";
+import {NextApiRequest} from "next";
 
-
-export function parseCookies(req: any): any {
-    console.log(req);
-    return cookie.parse(req ? req.headers.cookie || "" : "");
+export function parseCookies(req: NextApiRequest) {
+    return req ? req.cookies : {};
 }

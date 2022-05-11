@@ -14,39 +14,14 @@ import IconMenuItem from "@/components/partials/IconMenuItem";
 import Logo from "@/public/logo.svg";
 import {useRouter} from "next/router";
 import PageTitle from "@/components/partials/PageTitle";
-import {useRecoilState, useRecoilValue} from "recoil";
-import {pageState, userState} from "@/store/index";
+import {useRecoilState} from "recoil";
+import {pageState} from "@/store/index";
 
 export default function Layout({title, keywords, description, children, pageTitle}: LayoutInterface) {
     const router = useRouter();
     const [page, setPage] = useRecoilState<PagePropsInterface>(pageState);
-    const user = useRecoilValue(userState);
-    const {isReady} = useRouter();
-
-    const userChecker = () => {
-        if (!user) {
-            console.log("User is not logged in");
-            router.push("/account/login");
-        }
-        if (!user.confirmed) {
-            console.log("User is not confirmed");
-            router.push("/account/login");
-        }
-
-        if (user.blocked) {
-            console.log("User is blocked");
-            router.push("/account/login");
-        }
-    }
-
-
-    useEffect(() => {
-        userChecker();
-    }, [isReady]);
-
 
     const handleRoute = (url: string) => {
-        userChecker();
         setPage({name: url.replace("/", "")});
         router.push(url)
     }
@@ -71,19 +46,19 @@ export default function Layout({title, keywords, description, children, pageTitl
                             Admin Tools
                         </div>
                         <ul>
-                            <IconMenuItem Icon={MdOutlineLibraryBooks} onClick={() => handleRoute('/overview')}
+                            <IconMenuItem Icon={MdOutlineLibraryBooks} onClick={() => handleRoute('/cms/overview')}
                                           title={'Overview'} page={page.name}/>
 
-                            <IconMenuItem Icon={MdPeople} onClick={() => handleRoute('/customers')}
+                            <IconMenuItem Icon={MdPeople} onClick={() => handleRoute('/cms/customers')}
                                           title={'Customers'} page={page.name}/>
 
-                            <IconMenuItem Icon={MdOutlinePets} onClick={() => handleRoute('/pets')}
+                            <IconMenuItem Icon={MdOutlinePets} onClick={() => handleRoute('/cms/pets')}
                                           title={'Pets'} page={page.name}/>
 
-                            <IconMenuItem Icon={MdCalendarToday} onClick={() => handleRoute('/reservations')}
+                            <IconMenuItem Icon={MdCalendarToday} onClick={() => handleRoute('/cms/reservations')}
                                           title={'Reservations'} page={page.name}/>
 
-                            <IconMenuItem Icon={MdSettings} onClick={() => handleRoute('/settings')}
+                            <IconMenuItem Icon={MdSettings} onClick={() => handleRoute('/cms/settings')}
                                           title={'Settings'} page={page.name}/>
                         </ul>
                         <div className='border-b border-mono-100'/>

@@ -1,5 +1,7 @@
 import React from "react";
 import {IconType} from "react-icons/lib";
+import {IncomingMessage} from "http";
+import {NextApiRequestCookies} from "next/dist/server/api-utils";
 
 
 export interface AccountInterface {
@@ -66,3 +68,11 @@ export interface UserInterface {
     createdAt: string;
     updatedAt: string;
 }
+
+export interface UseUserInterface {
+    user: UserInterface | null | undefined | void;
+    updateUser: (user: UserInterface) => void;
+    clearUser: () => void;
+    getUser: () => void;
+}
+
