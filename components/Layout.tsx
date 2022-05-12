@@ -22,8 +22,6 @@ import {API_URL} from "@/config/index";
 export default function Layout({title, keywords, description, children, pageTitle}: LayoutInterface) {
     const router = useRouter();
     const [page, setPage] = useRecoilState<string>(pageState);
-    console.log(router.asPath.replace('/cms/','').toLowerCase())
-
     useEffect(() => {
         setPage(router.asPath.replace('/cms/','').toLowerCase())
     },[])
