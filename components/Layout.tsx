@@ -78,9 +78,9 @@ export default function Layout({title, keywords, description, children, pageTitl
                         </ul>
 
                     </div>
-                    <div className='p-10 w-full'>
+                    <div className='p-10 w-full h-full'>
                         <PageTitle pageTitle={pageTitle}/>
-                        <div className='mt-10'>
+                        <div className='mt-10 h-full'>
                             {children}
                         </div>
                     </div>

@@ -11,6 +11,7 @@ import {BACK_END_DEFAULT_URL} from "@/config/index";
 import {MdFemale, MdMale} from "react-icons/md";
 import {FaGenderless} from "react-icons/fa";
 import Button from "@/components/partials/Button";
+import LoadIndicator from "@/components/loadIndicator";
 
 interface CustomerInterface {
     id: number;
@@ -165,9 +166,9 @@ const CustomersPage: NextPage = () => {
         await refetch();
     }
 
-    if (isLoading) {
+    if (true) {
         return <Layout pageTitle={'Customers'}>
-            <div>Loading...</div>
+            <LoadIndicator/>
         </Layout>
     }
     if (isError) {

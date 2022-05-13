@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@lottiefiles/react-lottie-player": "^3.4.6",
     "@types/cookie": "^0.5.1",
     "cookie": "^0.5.0",
     "framer-motion": "^6.3.3",
