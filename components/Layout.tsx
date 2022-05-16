@@ -23,24 +23,21 @@ export default function Layout({title, keywords, description, children, pageTitl
     const router = useRouter();
     const [page, setPage] = useRecoilState<string>(pageState);
     useEffect(() => {
-        setPage(router.asPath.replace('/cms/','').toLowerCase())
-    },[])
+        setPage(router.asPath.replace('/cms/', '').toLowerCase())
+    }, [])
 
     const handleRoute = async (url: string) => {
         await router.push(url)
     }
     return (
-        <div>
-            <div>
-                <Head>
-                    <title>{title}</title>
-                    <meta name="keywords" content={keywords}/>
-                    <meta name="description" content={description}/>
-                    <meta name="keywords" content={keywords}/>
-                </Head>
-            </div>
-            <div className="container bg-white h-screen">
-
+        <>
+            <Head>
+                <title>{title}</title>
+                <meta name="keywords" content={keywords}/>
+                <meta name="description" content={description}/>
+                <meta name="keywords" content={keywords}/>
+            </Head>
+            <div className="container bg-white h-full max-w-full max-h-screen overflow-y-scroll">
                 <div className='flex h-full'>
                     <div className='w-72 h-full bg-white border-r-2 border-mono-100 px-4'>
                         <div className='m-10'>
@@ -87,7 +84,7 @@ export default function Layout({title, keywords, description, children, pageTitl
                 </div>
 
             </div>
-        </div>
+        </>
     );
 }
 

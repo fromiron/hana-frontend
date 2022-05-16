@@ -11,7 +11,7 @@ import {BACK_END_DEFAULT_URL} from "@/config/index";
 import {MdFemale, MdMale} from "react-icons/md";
 import {FaGenderless} from "react-icons/fa";
 import Button from "@/components/partials/Button";
-import LoadIndicator from "@/components/loadIndicator";
+import LoadIndicator from "@/components/LoadIndicator";
 
 interface CustomerInterface {
     id: number;
@@ -79,10 +79,10 @@ interface CustomersResponse {
 const IconContainer = ({children}: any) => <div
     className='text-xs rounded min-h-fit h-auto flex justify-center p-1 bg-mono-100 mr-2'>{children}</div>;
 const SexIcon = (sex: string) => {
-    if (sex === '男性') {
+    if (sex === 'male') {
         return <IconContainer><MdMale color={'#345eeb'}/></IconContainer>
     }
-    if (sex === '女性') {
+    if (sex === 'female') {
         return <IconContainer><MdFemale color={'#fc0373'}/></IconContainer>
     }
     return <IconContainer><FaGenderless color={'#b134eb'}/></IconContainer>
@@ -137,21 +137,22 @@ const CustomersPage: NextPage = () => {
     const handleSexFilter = async (e: any) => {
         const filterName = e.target.id;
         const checked = e.target.checked;
-        const filterObj = {...sexFilter, [filterName]: checked};
-        setSexFilter(filterObj)
+        setSexFilter({...sexFilter, [filterName]: checked})
         const list: string[] = [];
 
-        Object.entries(filterObj).forEach(([key, value]) => {
+        Object.entries(sexFilter).forEach(([key, value]) => {
             if (value) {
                 list.push(key);
             }
         })
+        console.log(sexFilter)
         console.log(list);
         const filter = {
             filters: {
                 sex: {
                     sex: {
-                        $eq: list
+                        $eq: list,
+                        $null:sexFilter.other
                     }
                 }
             },
@@ -166,7 +167,7 @@ const CustomersPage: NextPage = () => {
         await refetch();
     }
 
-    if (true) {
+    if (isLoading) {
         return <Layout pageTitle={'Customers'}>
             <LoadIndicator/>
         </Layout>
