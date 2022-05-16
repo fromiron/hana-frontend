@@ -20,9 +20,9 @@ export const queryClient = new QueryClient({
             onError: queryErrorHandler,
             staleTime: 100,
             cacheTime: 200,
-            refetchOnMount: true,
-            refetchOnReconnect: true,
-            refetchOnWindowFocus: true,
+            refetchOnMount: false,
+            refetchOnReconnect: false,
+            refetchOnWindowFocus: false,
         },
     },
 });

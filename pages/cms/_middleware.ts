@@ -24,6 +24,5 @@ function blockedUrlChecker(url: string) {
         'reservations/',
         'settings/',
     ];
-    console.log(blockedUrlList.includes(url))
     return blockedUrlList.includes(url);
 }

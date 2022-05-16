@@ -1,94 +1,22 @@
-import type {GetStaticProps, NextApiRequest, NextPage} from 'next'
+import type {NextPage} from 'next'
 import {GetServerSideProps} from "next";
 import Layout from "@/components/Layout";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {dehydrate, QueryClient, useQuery} from "react-query";
 import {queryKeys} from "../../../react-query/constants";
 import {getCustomers} from "@/services/customers";
 import qs from "qs";
 import Image from "next/image";
 import {BACK_END_DEFAULT_URL} from "@/config/index";
-import {MdFemale, MdMale} from "react-icons/md";
-import {FaGenderless} from "react-icons/fa";
 import Button from "@/components/partials/Button";
 import LoadIndicator from "@/components/LoadIndicator";
+import {CustomerInterface, CustomersResponse, PetInterface, SexFilterInterface} from "@/interfaces/customerInterface";
+import {IconContainer, SexIcon} from "@/components/partials/Icon";
 
-interface CustomerInterface {
-    id: number;
-    attributes: {
-        kana: string;
-        kanji: string;
-        email: string;
-        address: string;
-        createdAt: string;
-        updatedAt: string;
-        note: string;
-        phone: string;
-        zipcode: string;
-        sex: { data: SexInterface },
-        age_group: { data: AgeGroupInterface },
-        pets: { data: PetInterface[] }
-    }
-}
+const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_PAGE_NUMBER = 1;
 
-interface SexInterface {
-    id: number;
-    attributes: {
-        sex: string;
-    }
-}
-
-interface AgeGroupInterface {
-    id: number;
-    attributes: {
-        group: string;
-    }
-}
-
-interface PetInterface {
-    id: number;
-    attributes: {
-        name: string,
-        birth: string,
-        createdAt: string,
-        updatedAt: string,
-        note: string,
-        dead: boolean,
-        type: {
-            data: {
-                id: number,
-                attributes: {
-                    type: string,
-                    icon: {
-                        data: {
-                            attributes: {
-                                url: string
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-interface CustomersResponse {
-    customers: [CustomerInterface];
-}
-
-const IconContainer = ({children}: any) => <div
-    className='text-xs rounded min-h-fit h-auto flex justify-center p-1 bg-mono-100 mr-2'>{children}</div>;
-const SexIcon = (sex: string) => {
-    if (sex === 'male') {
-        return <IconContainer><MdMale color={'#345eeb'}/></IconContainer>
-    }
-    if (sex === 'female') {
-        return <IconContainer><MdFemale color={'#fc0373'}/></IconContainer>
-    }
-    return <IconContainer><FaGenderless color={'#b134eb'}/></IconContainer>
-}
-
-const defaultQuery = qs.stringify({
+const DEFAULT_QUERY = {
     populate: {
         age_group: {
             fields: ['group'],
@@ -106,18 +34,34 @@ const defaultQuery = qs.stringify({
 
         }
     },
-}, {
-    encodeValuesOnly: true,
-});
+    filters: {
+        sex: {
+            sex: {$eq: ['male', 'female', 'other']}
+        },
+        deleted_at: {
+            $null: true,
+        },
+    },
+    sort: ['id:asc']
+}
 
-const defaultFilterConfig = {
+const DEFAULT_QUERY_STRING = qs.stringify(DEFAULT_QUERY, {
+    encodeValuesOnly: true,
+})
+
+
+const DEFAULT_SEX_FILTER_OPTIONS: SexFilterInterface = {
     male: true,
     female: true,
     other: true
 }
+
+
 const CustomersPage: NextPage = () => {
-    const [queryString, setQueryString] = useState(defaultQuery);
-    const [sexFilter, setSexFilter] = useState(defaultFilterConfig);
+    const [queryString, setQueryString] = useState(DEFAULT_QUERY_STRING);
+    const [searchText, setSearchText] = useState('')
+    const [sexFilter, setSexFilter] = useState<SexFilterInterface>(DEFAULT_SEX_FILTER_OPTIONS);
+    const [sortFilter, setSortFilter] = useState<object>(['id:asc']);
     const {data, isLoading, isError, refetch} = useQuery(queryKeys.customers, async () => {
         const res = await getCustomers(queryString);
         if (res.ok) {
@@ -125,46 +69,73 @@ const CustomersPage: NextPage = () => {
         }
     });
 
-    const handleQuery = async (qsString: string) => {
-        const newQueryObject = JSON.parse(qsString);
-        const parsedDefaultQueryObject = qs.parse(defaultQuery);
-        const query = Object.assign(parsedDefaultQueryObject, newQueryObject)
-        const newQueryString = qs.stringify(query)
-        await setQueryString(newQueryString);
-        await refetch();
+    useEffect(() => {
+        (async function () {
+            await refetch()
+        })();
+    }, [queryString])
+
+
+    const handleQuery = async () => {
+        console.log('[CUSTOMER FETCH]')
+        let sexEq = Object.keys(sexFilter).filter((key) => sexFilter[key] === true);
+        if (sexEq.length === 0) {
+            sexEq = ['']
+        }
+        const newQuery = {
+            ...DEFAULT_QUERY,
+            filters: {
+                sex: {
+                    sex: {
+                        $eq: sexEq,
+                    }
+                },
+                $or: [
+                    {kana: {$contains: searchText}},
+                    {kanji: {$contains: searchText}},
+                    {email: {$contains: searchText}},
+                    {address: {$contains: searchText}},
+                    {note: {$contains: searchText}},
+                    {phone: {$contains: searchText}},
+                    {zipcode: {$contains: searchText}},
+                ]
+            },
+            sort: sortFilter
+        };
+        console.log('newQuery', newQuery.filters.sex.sex.$eq)
+
+        await setQueryString(qs.stringify(newQuery, {
+            encodeValuesOnly: true,
+        }));
     }
+    const handleSort = async (sort: string) => {
+        await setSortFilter([sort]);
+    }
+
 
     const handleSexFilter = async (e: any) => {
         const filterName = e.target.id;
         const checked = e.target.checked;
-        setSexFilter({...sexFilter, [filterName]: checked})
-        const list: string[] = [];
+        console.log(e.target)
 
-        Object.entries(sexFilter).forEach(([key, value]) => {
-            if (value) {
-                list.push(key);
-            }
-        })
-        console.log(sexFilter)
-        console.log(list);
-        const filter = {
-            filters: {
-                sex: {
-                    sex: {
-                        $eq: list,
-                        $null:sexFilter.other
-                    }
-                }
-            },
+        const newSexFilter = {
+            ...sexFilter,
+            [filterName]: checked
         }
-        const queryString = JSON.stringify(filter);
-        await handleQuery(queryString);
+        console.log("newSexFilter", newSexFilter)
+        await setSexFilter(newSexFilter)
     }
-
+    //
     const resetFilter = async () => {
-        await setSexFilter(defaultFilterConfig)
-        await setQueryString(defaultQuery);
-        await refetch();
+        await setSearchText('');
+        await setSexFilter(DEFAULT_SEX_FILTER_OPTIONS)
+        await setQueryString(DEFAULT_QUERY_STRING);
+    }
+    const handleSearch = async () => {
+        await handleQuery();
+    }
+    const changeSearchText = (e: any) => {
+        setSearchText(e.target.value);
     }
 
     if (isLoading) {
@@ -195,10 +166,10 @@ const CustomersPage: NextPage = () => {
             <TableItem>
                 <div className='flex'>{customer.attributes?.pets?.data.map(
                     (pet: PetInterface) => <IconContainer key={pet.id}>
-                        <Image
-                            src={BACK_END_DEFAULT_URL + pet.attributes?.type?.data?.attributes.icon.data.attributes.url}
-                            width={20}
-                            height={20}/>
+                        <Image alt='pet_icon'
+                               src={BACK_END_DEFAULT_URL + pet.attributes?.type?.data?.attributes.icon.data.attributes.url}
+                               width={20}
+                               height={20}/>
                     </IconContainer>
                 )}</div>
             </TableItem>
@@ -208,17 +179,17 @@ const CustomersPage: NextPage = () => {
         <Layout title={'Customers - Rabbit Sitter Hana'} pageTitle={'Customers'}>
             <div className='text-xs mb-2 text-mono-200'>Filters</div>
             <div className='flex'>
-                <select onChange={(e) => handleQuery(e.target.value)} className='w-fit p-2 rounded-lg bg-mono-100
-                   transition duration-500 border-2 border-mono-100 w-full bg-mono-100 focus:outline-none
+                <select onChange={(e) => handleSort(e.target.value)} className='w-fit p-2 rounded-lg bg-mono-100
+                   transition duration-500 border-2 border-mono-100 w-fit bg-mono-100 focus:outline-none
                     focus:border-primary focus:bg-white rounded p-3 text-black mr-4'>
-                    <option value={JSON.stringify({'sort': ['id:asc']})}>ID昇順</option>
-                    <option value={JSON.stringify({'sort': ['id:desc']})}>ID降順</option>
-                    <option value={JSON.stringify({'sort': ['age_group.id:asc']})}>年齢昇順</option>
-                    <option value={JSON.stringify({'sort': ['age_group.id:desc']})}>年齢昇順</option>
+                    <option value={'id:asc'}>ID昇順</option>
+                    <option value={'id:desc'}>ID降順</option>
+                    <option value={'age_group.id:asc'}>年齢昇順</option>
+                    <option value={'age_group.id:desc'}>年齢昇順</option>
                 </select>
                 <input
                     className='transition duration-500 border-2 border-mono-100 w-full bg-mono-100 focus:outline-none focus:border-primary focus:bg-white rounded p-3 text-black'
-                    placeholder='Search' type='text'/>
+                    placeholder='Search' type='text' value={searchText} onChange={changeSearchText}/>
             </div>
 
             <div className='mt-4'>
@@ -243,8 +214,13 @@ const CustomersPage: NextPage = () => {
                                className="transition duration-500 appearance-none checked:bg-primary border-2 border-mono-200 h-4 w-4 rounded select-none"/>
                         <span className="ml-2 select-none">別姓</span>
                     </label>
-                    <div className='w-fit'>
-                        <Button title={'RESET'} onClick={resetFilter}/>
+                    <div className='flex'>
+                        <div className='min-w-full mr-4'>
+                            <Button title={'検索'} onClick={handleSearch}/>
+                        </div>
+                        <div className='min-w-full'>
+                            <Button title={'RESET'} onClick={resetFilter}/>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -278,12 +254,12 @@ const CustomersPage: NextPage = () => {
 export default CustomersPage
 
 
-export const getServerSideProps: GetServerSideProps = async ({req}) => {
+export const getServerSideProps: GetServerSideProps = async () => {
     const client = new QueryClient();
 
     try {
         await client.prefetchQuery<CustomersResponse>(queryKeys.customers, async () => {
-            const res = await getCustomers(defaultQuery);
+            const res = await getCustomers(DEFAULT_QUERY_STRING);
             if (res.ok) {
                 return res.json()
             }
