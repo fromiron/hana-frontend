@@ -90,8 +90,8 @@ const CustomersPage: NextPage = () => {
     } = useQuery(queryKeys.customers, () => getCustomers(queryString).then(r => r.json()), {
         onSuccess:
             (data) => {
-                setCustomers(data.customers.data);
-                setPageCount(data.customers.meta.pagination.pageCount);
+                setCustomers(data.data);
+                setPageCount(data.meta.pagination.pageCount);
             }
     });
     const setSortFilter = (sort: string) => {

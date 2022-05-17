@@ -18,7 +18,7 @@ export default async function customers(req: NextApiRequest, res: NextApiRespons
         });
         const data = await strapiRes.json();
         if (strapiRes.ok) {
-            return res.status(200).json({customers: data});
+            return res.status(200).json(data);
         } else {
             return res.status(data.error.status).json({message: data.error.message});
         }
