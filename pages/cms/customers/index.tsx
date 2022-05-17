@@ -13,6 +13,9 @@ import {CustomerInterface, PetInterface, SexFilterInterface} from "@/interfaces/
 import {IconContainer, SexIcon} from "@/components/partials/Icon";
 import debugConsole from "@/helpers/debugConsole";
 import {TableItem} from "@/components/partials/TableItem";
+import Pagination from "@/components/Pagination";
+import SectionLabel from "@/components/partials/SectionLabel";
+import CheckBox from "@/components/partials/Checkbox";
 
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -60,38 +63,15 @@ const DEFAULT_SEX_FILTER_OPTIONS: SexFilterInterface = {
     female: true,
     other: true
 }
-
-
-function Pagination({pageCount, page, handlePage}: { pageCount: number, page: number, handlePage: any }) {
-    return (
-        <div>
-            <ul className='flex mt-4 justify-center'>
-
-                <li className={`p-2 ${page > 1 ? 'bg-mono-100 text-black' : 'bg-white text-mono-200'} mr-2 rounded cursor-pointer select-none hover:bg-accent hover:text-white`}
-                    onClick={handlePage}
-                    value={page - 1}>
-                    prev
-                </li>
-
-                {Array.from({length: pageCount}, (_, i) => (
-                    <li
-                        key={i}
-                        value={i + 1}
-                        className={`p-2 ${page === i + 1 ? 'bg-primary text-white' : 'bg-mono-100 text-black'} mr-2 rounded cursor-pointer select-none hover:bg-accent hover:text-white`}
-                        onClick={handlePage}
-                    >
-                        {i + 1}
-                    </li>
-                ))}
-                <li className={`p-2 ${page < pageCount ? 'bg-mono-100 text-black' : 'bg-white text-mono-200'} mr-2 rounded cursor-pointer select-none hover:bg-accent hover:text-white`}
-                    value={page + 1}
-                    onClick={handlePage}>
-                    next
-                </li>
-            </ul>
-        </div>
-    )
-}
+const SORT_LIST = [
+    ['id:asc', 'ID昇順'],
+    ['id:desc', 'ID降順'],
+    ['age_group.id:asc', '年齢昇順'],
+    ['age_group.id:desc', '年齢降順'],
+]
+const PAGE_SIZE_LIST = [
+    10, 20, 50
+]
 
 const CustomersPage: NextPage = () => {
     const [queryString, setQueryString] = useState(DEFAULT_QUERY_STRING)
@@ -101,7 +81,7 @@ const CustomersPage: NextPage = () => {
     const page = useRef(DEFAULT_PAGE_NUMBER)
     const pageSize = useRef(DEFAULT_PAGE_SIZE)
     const sexFilter = useRef<SexFilterInterface>(DEFAULT_SEX_FILTER_OPTIONS);
-    const sortFilter= useRef<string>('id:asc');
+    const sortFilter = useRef<string>('id:asc');
     const {
         isLoading,
         isError,
@@ -113,7 +93,7 @@ const CustomersPage: NextPage = () => {
                 setPageCount(data.customers.meta.pagination.pageCount);
             }
     });
-    const setSortFilter = (sort:string)=>{
+    const setSortFilter = (sort: string) => {
         sortFilter.current = sort;
     }
     const setPage = (num: number) => {
@@ -137,7 +117,7 @@ const CustomersPage: NextPage = () => {
         (async function () {
             await refetch()
         })()
-    }, [queryString, refetch])
+    }, [queryString])
 
     const handlePage = async (e: { target: { value: string; }; }) => {
         const newPage = parseInt(e.target.value);
@@ -282,17 +262,18 @@ const CustomersPage: NextPage = () => {
             </TableItem>
         </tr>
     ))
+
+
     return (
         <Layout title={'Customers - Rabbit Sitter Hana'} pageTitle={'Customers'}>
-            <div className='text-xs mb-2 text-mono-200'>Filters</div>
+            <SectionLabel label={'Filters'}/>
             <div className='flex'>
                 <select onChange={handleSort} className='w-fit p-2 rounded-lg bg-mono-100
                    transition duration-500 border-2 border-mono-100 w-fit bg-mono-100 focus:outline-none
                     focus:border-primary focus:bg-white rounded p-3 text-black mr-4'>
-                    <option value={'id:asc'} selected={sortFilter.current === 'id:asc'}>ID昇順</option>
-                    <option value={'id:desc'} selected={sortFilter.current === 'id:desc'}>ID降順</option>
-                    <option value={'age_group.id:asc'} selected={sortFilter.current === 'age_group.id:asc'}>年齢昇順</option>
-                    <option value={'age_group.id:desc'} selected={sortFilter.current === 'age_group.id:desc'}>年齢昇順</option>
+                    {SORT_LIST.map(([value, label]) => (
+                        <option key={value} selected={sortFilter.current === value} value={value}>{label}</option>
+                    ))}
                 </select>
                 <input
                     className='transition duration-500 border-2 border-mono-100 w-full bg-mono-100 focus:outline-none focus:border-primary focus:bg-white rounded p-3 text-black'
@@ -301,32 +282,18 @@ const CustomersPage: NextPage = () => {
 
             <div className='mt-4'>
                 <div className='flex text-black text-xs'>
-                    <label htmlFor="male"
-                           className="rounded py-2 px-4 mr-4 bg-mono-100 selection:none cursor-pointer flex items-center">
-                        <input id="male" type="checkbox" onChange={handleSexFilter} checked={sexFilter.current.male}
-                               className="transition duration-500 appearance-none checked:bg-primary border-2 border-mono-200 h-4 w-4 rounded select-none"/>
-                        <span className="ml-2 select-none">男性</span>
-                    </label>
 
-                    <label htmlFor="female"
-                           className="rounded py-2 px-4 mr-4 bg-mono-100 selection:none cursor-pointer flex items-center">
-                        <input id="female" type="checkbox" onChange={handleSexFilter} checked={sexFilter.current.female}
-                               className="transition duration-500 appearance-none checked:bg-primary border-2 border-mono-200 h-4 w-4 rounded select-none"/>
-                        <span className="ml-2 select-none">女性</span>
-                    </label>
+                    <CheckBox name={'male'} label={'男性'} checked={sexFilter.current.male} onChange={handleSexFilter}/>
+                    <CheckBox name={'female'} label={'女性'} checked={sexFilter.current.female}
+                              onChange={handleSexFilter}/>
+                    <CheckBox name={'other'} label={'別姓'} checked={sexFilter.current.other} onChange={handleSexFilter}/>
 
-                    <label htmlFor="other"
-                           className="rounded py-2 px-4 mr-4 bg-mono-100 selection:none cursor-pointer flex items-center">
-                        <input id="other" type="checkbox" onChange={handleSexFilter} checked={sexFilter.current.other}
-                               className="transition duration-500 appearance-none checked:bg-primary border-2 border-mono-200 h-4 w-4 rounded select-none"/>
-                        <span className="ml-2 select-none">別姓</span>
-                    </label>
                     <select onChange={changePageSize} className='w-fit p-2 rounded-lg bg-mono-100
                    transition duration-500 border-2 border-mono-100 w-fit bg-mono-100 focus:outline-none
-                    focus:border-primary focus:bg-white rounded p-3 text-black mr-4' >
-                        <option value={10} selected={pageSize.current===10}>10個</option>
-                        <option value={20} selected={pageSize.current===20}>20個</option>
-                        <option value={50} selected={pageSize.current===50}>50個</option>
+                    focus:border-primary focus:bg-white rounded p-3 text-black mr-4'>
+                        {PAGE_SIZE_LIST.map((value) => (
+                            <option key={value} selected={pageSize.current === value} value={value}>{value}個</option>
+                        ))}
                     </select>
 
                     <div className='mr-4'>
@@ -338,9 +305,7 @@ const CustomersPage: NextPage = () => {
 
                 </div>
             </div>
-
-            <div className='text-xs mt-4 mb-2 text-mono-200'>Board</div>
-
+            <SectionLabel label={'Board'}/>
             <div className='p-4 bg-mono-100 rounded w-full'>
                 <table className="table-auto rounded overflow-hidden w-full">
                     <thead className='text-white bg-primary'>
