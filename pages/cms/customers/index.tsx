@@ -12,10 +12,11 @@ import LoadIndicator from "@/components/LoadIndicator";
 import {CustomerInterface, PetInterface, SexFilterInterface} from "@/interfaces/customerInterface";
 import {IconContainer, SexIcon} from "@/components/partials/Icon";
 import debugConsole from "@/helpers/debugConsole";
-import {TableItem} from "@/components/partials/TableItem";
+import {TableItem, TableRow} from "@/components/partials/TableParts";
 import Pagination from "@/components/Pagination";
 import SectionLabel from "@/components/partials/SectionLabel";
 import CheckBox from "@/components/partials/Checkbox";
+import Table from "@/components/Table";
 
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -239,10 +240,19 @@ const CustomersPage: NextPage = () => {
         </Layout>
     }
 
+    const tableHeaderList = [
+        'ID',
+        'Name',
+        'Age',
+        'Gender',
+        'Mail',
+        'Address',
+        'Tel',
+        'Pets'
+    ]
 
     const customerList = customers?.map((customer: CustomerInterface) => (
-        <tr key={customer.id}
-            className='transition duration-300 ease-in-out bg-white hover:bg-mono-100 focus:bg-mono-100 cursor-pointer'>
+        <TableRow key={customer.id}>
             <TableItem>{customer.id}</TableItem>
             <TableItem>{`${customer.attributes?.kanji}(${customer.attributes?.kana})`}</TableItem>
             <TableItem>{customer.attributes?.age_group?.data?.attributes?.group}</TableItem>
@@ -260,7 +270,7 @@ const CustomersPage: NextPage = () => {
                     </IconContainer>
                 )}</div>
             </TableItem>
-        </tr>
+        </TableRow>
     ))
 
 
@@ -307,23 +317,7 @@ const CustomersPage: NextPage = () => {
             </div>
             <SectionLabel label={'Board'}/>
             <div className='p-4 bg-mono-100 rounded w-full'>
-                <table className="table-auto rounded overflow-hidden w-full">
-                    <thead className='text-white bg-primary'>
-                    <tr className='px-6 py-2 divide-white  text-s'>
-                        <th className='p-2'>ID</th>
-                        <th className='p-2'>名前(かな)</th>
-                        <th className='p-2'>年齢</th>
-                        <th className='p-2'>性別</th>
-                        <th className='p-2'>メール</th>
-                        <th className='p-2'>住所</th>
-                        <th className='p-2'>連絡先</th>
-                        <th className='p-2'>ペット</th>
-                    </tr>
-                    </thead>
-                    <tbody className='white divide-y divide-mono-100 bg-white text-black'>
-                    {customerList}
-                    </tbody>
-                </table>
+                <Table thList={tableHeaderList}>{customerList}</Table>
             </div>
             <Pagination page={page.current} pageCount={pageCount} handlePage={handlePage}/>
         </Layout>
