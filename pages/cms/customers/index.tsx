@@ -188,7 +188,6 @@ const CustomersPage: NextPage = () => {
             [filterName]: checked
         }
         new Promise<void>((resolve) => {
-            console.log('newSexFilter', newSexFilter)
             setSexFilter(newSexFilter);
             resolve();
         }).then(() => {
