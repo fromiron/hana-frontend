@@ -9,7 +9,7 @@ import Image from "next/image";
 import {BACK_END_DEFAULT_URL} from "@/config/index";
 import Button from "@/components/partials/Button";
 import LoadIndicator from "@/components/LoadIndicator";
-import {CustomerInterface, PetInterface, SexFilterInterface} from "@/interfaces/customerInterface";
+import {CustomerInterface,  SexFilterInterface} from "@/interfaces/customerInterface";
 import {IconContainer, SexIcon} from "@/components/partials/Icon";
 import debugConsole from "@/helpers/debugConsole";
 import {TableItem, TableRow} from "@/components/partials/TableParts";
@@ -17,6 +17,7 @@ import Pagination from "@/components/Pagination";
 import SectionLabel from "@/components/partials/SectionLabel";
 import CheckBox from "@/components/partials/Checkbox";
 import Table from "@/components/Table";
+import {PetInterface} from "@/interfaces/petInterface";
 
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -89,9 +90,9 @@ const CustomersPage: NextPage = () => {
         refetch
     } = useQuery(queryKeys.customers, () => getCustomers(queryString).then(r => r.json()), {
         onSuccess:
-            (data) => {
-                setCustomers(data.data);
-                setPageCount(data.meta.pagination.pageCount);
+            (res) => {
+                setCustomers(res.data);
+                setPageCount(res.meta.pagination.pageCount);
             }
     });
     const setSortFilter = (sort: string) => {
@@ -291,7 +292,6 @@ const CustomersPage: NextPage = () => {
 
             <div className='mt-4'>
                 <div className='flex text-black text-xs'>
-
                     <CheckBox name={'male'} label={'男性'} checked={sexFilter.current.male} onChange={handleSexFilter}/>
                     <CheckBox name={'female'} label={'女性'} checked={sexFilter.current.female}
                               onChange={handleSexFilter}/>
@@ -311,13 +311,10 @@ const CustomersPage: NextPage = () => {
                     <div className=' mr-4'>
                         <Button title={'RESET'} onClick={resetFilter}/>
                     </div>
-
                 </div>
             </div>
             <SectionLabel label={'Board'}/>
-            <div className='p-4 bg-mono-100 rounded w-full'>
-                <Table thList={tableHeaderList}>{customerList}</Table>
-            </div>
+            <Table thList={tableHeaderList}>{customerList}</Table>
             <Pagination page={page.current} pageCount={pageCount} handlePage={handlePage}/>
         </Layout>
     )

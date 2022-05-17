@@ -1,3 +1,5 @@
+import {PetInterface} from "@/interfaces/petInterface";
+
 export interface CustomerInterface {
     id: number;
     attributes: {
@@ -30,32 +32,7 @@ export interface AgeGroupInterface {
     }
 }
 
-export interface PetInterface {
-    id: number;
-    attributes: {
-        name: string,
-        birth: string,
-        createdAt: string,
-        updatedAt: string,
-        note: string,
-        dead: boolean,
-        type: {
-            data: {
-                id: number,
-                attributes: {
-                    type: string,
-                    icon: {
-                        data: {
-                            attributes: {
-                                url: string
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+
 
 export interface CustomersResponse {
     customers: [CustomerInterface];
