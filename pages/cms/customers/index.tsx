@@ -1,8 +1,7 @@
 import type {NextPage} from 'next'
-import {GetServerSideProps} from "next";
 import Layout from "@/components/Layout";
-import React, {useEffect, useState} from "react";
-import {dehydrate, QueryClient, useQuery} from "react-query";
+import React, {useEffect, useRef, useState} from "react";
+import {useQuery} from "react-query";
 import {queryKeys} from "../../../react-query/constants";
 import {getCustomers} from "@/services/customers";
 import qs from "qs";
@@ -10,12 +9,14 @@ import Image from "next/image";
 import {BACK_END_DEFAULT_URL} from "@/config/index";
 import Button from "@/components/partials/Button";
 import LoadIndicator from "@/components/LoadIndicator";
-import {CustomerInterface, CustomersResponse, PetInterface, SexFilterInterface} from "@/interfaces/customerInterface";
+import {CustomerInterface, PetInterface, SexFilterInterface} from "@/interfaces/customerInterface";
 import {IconContainer, SexIcon} from "@/components/partials/Icon";
+import debugConsole from "@/helpers/debugConsole";
+import {TableItem} from "@/components/partials/TableItem";
+
 
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_PAGE_NUMBER = 1;
-
 const DEFAULT_QUERY = {
     populate: {
         age_group: {
@@ -42,6 +43,10 @@ const DEFAULT_QUERY = {
             $null: true,
         },
     },
+    pagination: {
+        page: DEFAULT_PAGE_NUMBER,
+        pageSize: DEFAULT_PAGE_SIZE,
+    },
     sort: ['id:asc']
 }
 
@@ -57,86 +62,191 @@ const DEFAULT_SEX_FILTER_OPTIONS: SexFilterInterface = {
 }
 
 
+function Pagination({pageCount, page, handlePage}: { pageCount: number, page: number, handlePage: any }) {
+    return (
+        <div>
+            <ul className='flex mt-4 justify-center'>
+
+                <li className={`p-2 ${page > 1 ? 'bg-mono-100 text-black' : 'bg-white text-mono-200'} mr-2 rounded cursor-pointer select-none hover:bg-accent hover:text-white`}
+                    onClick={handlePage}
+                    value={page - 1}>
+                    prev
+                </li>
+
+                {Array.from({length: pageCount}, (_, i) => (
+                    <li
+                        key={i}
+                        value={i + 1}
+                        className={`p-2 ${page === i + 1 ? 'bg-primary text-white' : 'bg-mono-100 text-black'} mr-2 rounded cursor-pointer select-none hover:bg-accent hover:text-white`}
+                        onClick={handlePage}
+                    >
+                        {i + 1}
+                    </li>
+                ))}
+                <li className={`p-2 ${page < pageCount ? 'bg-mono-100 text-black' : 'bg-white text-mono-200'} mr-2 rounded cursor-pointer select-none hover:bg-accent hover:text-white`}
+                    value={page + 1}
+                    onClick={handlePage}>
+                    next
+                </li>
+            </ul>
+        </div>
+    )
+}
+
 const CustomersPage: NextPage = () => {
-    const [queryString, setQueryString] = useState(DEFAULT_QUERY_STRING);
+    const [queryString, setQueryString] = useState(DEFAULT_QUERY_STRING)
     const [searchText, setSearchText] = useState('')
-    const [sexFilter, setSexFilter] = useState<SexFilterInterface>(DEFAULT_SEX_FILTER_OPTIONS);
-    const [sortFilter, setSortFilter] = useState<object>(['id:asc']);
-    const {data, isLoading, isError, refetch} = useQuery(queryKeys.customers, async () => {
-        const res = await getCustomers(queryString);
-        if (res.ok) {
-            return res.json()
-        }
+    const [pageCount, setPageCount] = useState(1);
+    const [customers, setCustomers] = useState<CustomerInterface[]>([])
+    const page = useRef(DEFAULT_PAGE_NUMBER)
+    const pageSize = useRef(DEFAULT_PAGE_SIZE)
+    const sexFilter = useRef<SexFilterInterface>(DEFAULT_SEX_FILTER_OPTIONS);
+    const sortFilter= useRef<string>('id:asc');
+    const {
+        isLoading,
+        isError,
+        refetch
+    } = useQuery(queryKeys.customers, () => getCustomers(queryString).then(r => r.json()), {
+        onSuccess:
+            (data) => {
+                setCustomers(data.customers.data);
+                setPageCount(data.customers.meta.pagination.pageCount);
+            }
     });
+    const setSortFilter = (sort:string)=>{
+        sortFilter.current = sort;
+    }
+    const setPage = (num: number) => {
+        page.current = num;
+    }
+    const setPageSize = (num: number) => {
+        pageSize.current = num;
+    }
+
+    const setSexFilter = (newFilter: SexFilterInterface) => {
+        sexFilter.current = newFilter;
+    }
 
     useEffect(() => {
         (async function () {
             await refetch()
-        })();
-    }, [queryString])
+        })()
+    }, [])
+
+    useEffect(() => {
+        (async function () {
+            await refetch()
+        })()
+    }, [queryString, refetch])
+
+    const handlePage = async (e: { target: { value: string; }; }) => {
+        const newPage = parseInt(e.target.value);
+        if (newPage < 1 || newPage > pageCount) {
+            return;
+        }
+        new Promise<void>(resolve => {
+            setPage(newPage);
+            resolve();
+        }).then(() => {
+            handleQuery()
+        })
+    }
 
 
     const handleQuery = async () => {
-        console.log('[CUSTOMER FETCH]')
-        let sexEq = Object.keys(sexFilter).filter((key) => sexFilter[key] === true);
-        if (sexEq.length === 0) {
-            sexEq = ['']
-        }
-        const newQuery = {
-            ...DEFAULT_QUERY,
-            filters: {
-                sex: {
+        let newQueryString = '';
+        new Promise<void>((resolve) => {
+            let sexEq = Object.keys(sexFilter.current).filter((key) => sexFilter.current[key] === true);
+            if (sexEq.length === 0) {
+                sexEq = ['']
+            }
+            const newQuery = {
+                ...DEFAULT_QUERY,
+                filters: {
                     sex: {
-                        $eq: sexEq,
-                    }
+                        sex: {
+                            $eq: sexEq,
+                        }
+                    },
+                    deleted_at: {
+                        $null: true,
+                    },
+                    $or: [
+                        {kana: {$contains: searchText}},
+                        {kanji: {$contains: searchText}},
+                        {email: {$contains: searchText}},
+                        {address: {$contains: searchText}},
+                        {note: {$contains: searchText}},
+                        {phone: {$contains: searchText}},
+                        {zipcode: {$contains: searchText}},
+                    ]
                 },
-                $or: [
-                    {kana: {$contains: searchText}},
-                    {kanji: {$contains: searchText}},
-                    {email: {$contains: searchText}},
-                    {address: {$contains: searchText}},
-                    {note: {$contains: searchText}},
-                    {phone: {$contains: searchText}},
-                    {zipcode: {$contains: searchText}},
-                ]
-            },
-            sort: sortFilter
-        };
-        console.log('newQuery', newQuery.filters.sex.sex.$eq)
-
-        await setQueryString(qs.stringify(newQuery, {
-            encodeValuesOnly: true,
-        }));
+                sort: [sortFilter.current],
+                pagination: {page: page.current, pageSize: pageSize.current},
+            };
+            debugConsole('newQueryString - page', newQuery.pagination.page)
+            newQueryString = qs.stringify(newQuery, {
+                encodeValuesOnly: true,
+            })
+            resolve();
+        }).then(_ => {
+            setQueryString(newQueryString);
+        })
     }
-    const handleSort = async (sort: string) => {
-        await setSortFilter([sort]);
+    const handleSort = async (e: any) => {
+        setSortFilter(e.target.value)
+        await handleQuery();
     }
 
 
     const handleSexFilter = async (e: any) => {
         const filterName = e.target.id;
         const checked = e.target.checked;
-        console.log(e.target)
-
         const newSexFilter = {
-            ...sexFilter,
+            ...sexFilter.current,
             [filterName]: checked
         }
-        console.log("newSexFilter", newSexFilter)
-        await setSexFilter(newSexFilter)
+        new Promise<void>((resolve) => {
+            console.log('newSexFilter', newSexFilter)
+            setSexFilter(newSexFilter);
+            resolve();
+        }).then(() => {
+            handleQuery()
+        })
     }
-    //
+
     const resetFilter = async () => {
-        await setSearchText('');
-        await setSexFilter(DEFAULT_SEX_FILTER_OPTIONS)
-        await setQueryString(DEFAULT_QUERY_STRING);
+        new Promise<void>(resolve => {
+            setPageSize(DEFAULT_PAGE_SIZE);
+            setSortFilter('id:asc')
+            setSearchText('');
+            setSexFilter(DEFAULT_SEX_FILTER_OPTIONS)
+            setQueryString(DEFAULT_QUERY_STRING);
+            resolve();
+        }).then(() => {
+            handleQuery()
+        })
     }
     const handleSearch = async () => {
+        setPage(1);
         await handleQuery();
     }
     const changeSearchText = (e: any) => {
         setSearchText(e.target.value);
     }
+
+    const changePageSize = async (e: any) => {
+        const newPageSize = e.target.value;
+        const changePagePromise = new Promise<void>((resolve) => {
+            setPage(1);
+            setPageSize(newPageSize);
+            resolve();
+        })
+        changePagePromise.then(() => {
+            handleQuery();
+        })
+    }
+
 
     if (isLoading) {
         return <Layout pageTitle={'Customers'}>
@@ -148,12 +258,9 @@ const CustomersPage: NextPage = () => {
             <div>Error...</div>
         </Layout>
     }
-    const customers = data.customers;
-
-    const TableItem = ({children}: any) => <td className='p-2 text-center'>{children}</td>;
 
 
-    const customerList = customers?.data?.map((customer: CustomerInterface) => (
+    const customerList = customers?.map((customer: CustomerInterface) => (
         <tr key={customer.id}
             className='transition duration-300 ease-in-out bg-white hover:bg-mono-100 focus:bg-mono-100 cursor-pointer'>
             <TableItem>{customer.id}</TableItem>
@@ -179,13 +286,13 @@ const CustomersPage: NextPage = () => {
         <Layout title={'Customers - Rabbit Sitter Hana'} pageTitle={'Customers'}>
             <div className='text-xs mb-2 text-mono-200'>Filters</div>
             <div className='flex'>
-                <select onChange={(e) => handleSort(e.target.value)} className='w-fit p-2 rounded-lg bg-mono-100
+                <select onChange={handleSort} className='w-fit p-2 rounded-lg bg-mono-100
                    transition duration-500 border-2 border-mono-100 w-fit bg-mono-100 focus:outline-none
                     focus:border-primary focus:bg-white rounded p-3 text-black mr-4'>
-                    <option value={'id:asc'}>ID昇順</option>
-                    <option value={'id:desc'}>ID降順</option>
-                    <option value={'age_group.id:asc'}>年齢昇順</option>
-                    <option value={'age_group.id:desc'}>年齢昇順</option>
+                    <option value={'id:asc'} selected={sortFilter.current === 'id:asc'}>ID昇順</option>
+                    <option value={'id:desc'} selected={sortFilter.current === 'id:desc'}>ID降順</option>
+                    <option value={'age_group.id:asc'} selected={sortFilter.current === 'age_group.id:asc'}>年齢昇順</option>
+                    <option value={'age_group.id:desc'} selected={sortFilter.current === 'age_group.id:desc'}>年齢昇順</option>
                 </select>
                 <input
                     className='transition duration-500 border-2 border-mono-100 w-full bg-mono-100 focus:outline-none focus:border-primary focus:bg-white rounded p-3 text-black'
@@ -196,32 +303,39 @@ const CustomersPage: NextPage = () => {
                 <div className='flex text-black text-xs'>
                     <label htmlFor="male"
                            className="rounded py-2 px-4 mr-4 bg-mono-100 selection:none cursor-pointer flex items-center">
-                        <input id="male" type="checkbox" onChange={handleSexFilter} checked={sexFilter.male}
+                        <input id="male" type="checkbox" onChange={handleSexFilter} checked={sexFilter.current.male}
                                className="transition duration-500 appearance-none checked:bg-primary border-2 border-mono-200 h-4 w-4 rounded select-none"/>
                         <span className="ml-2 select-none">男性</span>
                     </label>
 
                     <label htmlFor="female"
                            className="rounded py-2 px-4 mr-4 bg-mono-100 selection:none cursor-pointer flex items-center">
-                        <input id="female" type="checkbox" onChange={handleSexFilter} checked={sexFilter.female}
+                        <input id="female" type="checkbox" onChange={handleSexFilter} checked={sexFilter.current.female}
                                className="transition duration-500 appearance-none checked:bg-primary border-2 border-mono-200 h-4 w-4 rounded select-none"/>
                         <span className="ml-2 select-none">女性</span>
                     </label>
 
                     <label htmlFor="other"
                            className="rounded py-2 px-4 mr-4 bg-mono-100 selection:none cursor-pointer flex items-center">
-                        <input id="other" type="checkbox" onChange={handleSexFilter} checked={sexFilter.other}
+                        <input id="other" type="checkbox" onChange={handleSexFilter} checked={sexFilter.current.other}
                                className="transition duration-500 appearance-none checked:bg-primary border-2 border-mono-200 h-4 w-4 rounded select-none"/>
                         <span className="ml-2 select-none">別姓</span>
                     </label>
-                    <div className='flex'>
-                        <div className='min-w-full mr-4'>
-                            <Button title={'検索'} onClick={handleSearch}/>
-                        </div>
-                        <div className='min-w-full'>
-                            <Button title={'RESET'} onClick={resetFilter}/>
-                        </div>
+                    <select onChange={changePageSize} className='w-fit p-2 rounded-lg bg-mono-100
+                   transition duration-500 border-2 border-mono-100 w-fit bg-mono-100 focus:outline-none
+                    focus:border-primary focus:bg-white rounded p-3 text-black mr-4' >
+                        <option value={10} selected={pageSize.current===10}>10個</option>
+                        <option value={20} selected={pageSize.current===20}>20個</option>
+                        <option value={50} selected={pageSize.current===50}>50個</option>
+                    </select>
+
+                    <div className='mr-4'>
+                        <Button title={'検索'} onClick={handleSearch}/>
                     </div>
+                    <div className=' mr-4'>
+                        <Button title={'RESET'} onClick={resetFilter}/>
+                    </div>
+
                 </div>
             </div>
 
@@ -246,34 +360,10 @@ const CustomersPage: NextPage = () => {
                     </tbody>
                 </table>
             </div>
+            <Pagination page={page.current} pageCount={pageCount} handlePage={handlePage}/>
         </Layout>
     )
 }
 
 
 export default CustomersPage
-
-
-export const getServerSideProps: GetServerSideProps = async () => {
-    const client = new QueryClient();
-
-    try {
-        await client.prefetchQuery<CustomersResponse>(queryKeys.customers, async () => {
-            const res = await getCustomers(DEFAULT_QUERY_STRING);
-            if (res.ok) {
-                return res.json()
-            }
-        });
-    } catch (e) {
-        return {
-            props: {
-                dehydratedState: dehydrate(client)
-            },
-        };
-    }
-    return {
-        props: {},
-    };
-}
-
-
