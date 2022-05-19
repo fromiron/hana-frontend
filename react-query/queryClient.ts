@@ -4,7 +4,7 @@ import {toast} from "react-toastify";
 
 function queryErrorHandler(error: unknown): void {
     // error is type unknown because in js, anything can be an error (e.g. throw(5))
-    const id = 'react-query-error';
+    const id = 'react-controller-error';
     const title =
         error instanceof Error
             ? // remove the initial 'Error: ' that accompanies many errors

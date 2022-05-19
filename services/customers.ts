@@ -1,10 +1,7 @@
 import {NEXT_API_URL} from "@/config/index";
-import debugConsole from "@/helpers/debugConsole";
 
-const getCustomers =  (query: string | null = '') => {
-    debugConsole('getCustomers - query', query);
+export const getCustomers =  (query: string | null = '') => {
     const url = `${NEXT_API_URL}/customers?${query}`;
-    debugConsole('getCustomers', url);
     return fetch(url, {
         method: 'GET',
         headers: {
@@ -13,4 +10,13 @@ const getCustomers =  (query: string | null = '') => {
     });
 }
 
-export {getCustomers};
+
+export const getCustomerAgeGroup = async () => {
+    return await fetch(`${NEXT_API_URL}/get/customers/age-group`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+}
+

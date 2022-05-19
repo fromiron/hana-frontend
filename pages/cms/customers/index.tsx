@@ -166,7 +166,6 @@ const CustomersPage: NextPage = () => {
                 sort: [sortFilter.current],
                 pagination: {page: page.current, pageSize: pageSize.current},
             };
-            debugConsole('newQueryString - page', newQuery.pagination.page)
             newQueryString = qs.stringify(newQuery, {
                 encodeValuesOnly: true,
             })

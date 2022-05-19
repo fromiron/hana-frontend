@@ -1,11 +1,8 @@
-import debugConsole from "@/helpers/debugConsole";
 import {NEXT_API_URL} from "@/config/index";
 
-const getPets =  (query: string | null = '') => {
-    debugConsole('getCustomers - query', query);
+export const getPets = async (query: string | null = '') => {
     const url = `${NEXT_API_URL}/pets?${query}`;
-    debugConsole('pets', url);
-    return fetch(url, {
+    return await fetch(url, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -13,4 +10,12 @@ const getPets =  (query: string | null = '') => {
     });
 }
 
-export {getPets};
+
+export const getPetTypeCount = async () => {
+    return await fetch(`${NEXT_API_URL}/get/pet-types/count`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+}
