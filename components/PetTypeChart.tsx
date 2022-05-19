@@ -3,18 +3,10 @@ import {queryKeys} from "../react-query/constants";
 import {getPetTypeCount} from "@/services/pets";
 import React from "react";
 import PieChart from "@/components/PieChart";
-
-
-interface PetTypeCountInterface {
-    id: number,
-    count: number
-    type: string,
-}
-
-export interface ChartDataInterface {
-    id: string,
-    value: number,
-}
+import ObjectWrapper from "@/components/partials/ObjectWrapper";
+import {PetTypeCountInterface} from "@/interfaces/petInterface";
+import {ChartDataInterface} from "@/interfaces/index";
+import SectionLabel from "@/components/partials/SectionLabel";
 
 export default function PetTypeChart() {
     const {
@@ -43,5 +35,10 @@ export default function PetTypeChart() {
     }
 
 
-    return <PieChart chartData={chartData} totalValue={totalValue}/>
+    return <div className={'flex-1'}>
+        <SectionLabel label={'Pet - Types'}/>
+        <ObjectWrapper>
+            <PieChart chartId={'petTypeChart'} chartData={chartData} totalValue={totalValue}/>
+        </ObjectWrapper>
+    </div>
 }

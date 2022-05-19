@@ -71,3 +71,7 @@ export interface UseUserInterface {
     getUser: () => void;
 }
 
+export interface ChartDataInterface {
+    id: string,
+    value: number,
+}

@@ -3,6 +3,11 @@ import {queryKeys} from "../react-query/constants";
 import React from "react";
 import {getCustomerAgeGroup} from "@/services/customers";
 import debugConsole from "@/helpers/debugConsole";
+import {ChartDataInterface} from "@/interfaces/index";
+import ObjectWrapper from "@/components/partials/ObjectWrapper";
+import PieChart from "@/components/PieChart";
+import {CustomerCountInterface} from "@/interfaces/customerInterface";
+import SectionLabel from "@/components/partials/SectionLabel";
 
 export default function CustomerChart() {
 
@@ -10,7 +15,7 @@ export default function CustomerChart() {
         data: customerAgeGroupList,
         isLoading,
         isError
-    } = useQuery(queryKeys.customerAgeGroup, () => getCustomerAgeGroup().then(r => r.json()))
+    } = useQuery<CustomerCountInterface[]>(queryKeys.customerAgeGroup, () => getCustomerAgeGroup().then(r => r.json()))
     if (isLoading) {
         return <div></div>
     }
@@ -18,6 +23,23 @@ export default function CustomerChart() {
         return <div></div>
     }
 
-    debugConsole('customerAgeGroupList', customerAgeGroupList)
-    return <></>
+    let totalValue = 0;
+    const chartData: ChartDataInterface[] = customerAgeGroupList?.map(customerAgeGroup => {
+        const id: string = customerAgeGroup.group;
+        const value: number = +customerAgeGroup.count;
+        totalValue += value;
+        return {id, value}
+    }) ?? [];
+
+    if (!chartData?.length) {
+        return <div></div>
+    }
+
+
+    return <div className={'flex-1'}>
+        <SectionLabel label={'Customers - Age Group'}/>
+        <ObjectWrapper>
+            <PieChart chartId={'customerAgeGroupChart'} chartData={chartData} totalValue={totalValue}/>
+        </ObjectWrapper>
+    </div>
 }

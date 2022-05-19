@@ -10,10 +10,11 @@ const OverviewPage: NextPage = () => {
 
     return (
         <Layout title={'Overview - Rabbit Sitter Hana'} pageTitle={'Overview'}>
-            <h1>OverviewPage</h1>
-            <PetTypeChart/>
-
-            <CustomerChart/>
+            <div className='flex w-full'>
+                <PetTypeChart/>
+                <div className='w-4'/>
+                <CustomerChart/>
+            </div>
         </Layout>
     )
 }

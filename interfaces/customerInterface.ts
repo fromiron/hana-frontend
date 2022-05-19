@@ -1,4 +1,5 @@
 import {PetInterface} from "@/interfaces/petInterface";
+import exp from "constants";
 
 export interface CustomerInterface {
     id: number;
@@ -46,4 +47,9 @@ export interface SexFilterInterface extends KeyValuePairInterface {
 
 export interface KeyValuePairInterface {
     [key: string]: any;
+}
+export interface CustomerCountInterface{
+    age_group_id:number,
+    group:string,
+    count:number
 }

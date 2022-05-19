@@ -53,3 +53,10 @@ export interface PetTypeInterface {
 export interface PetsPageProps {
     petTypes: PetTypeInterface[];
 }
+
+
+export interface PetTypeCountInterface {
+    id: number,
+    count: number
+    type: string,
+}
