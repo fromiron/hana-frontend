@@ -39,7 +39,7 @@ export default function CustomerChart() {
     return <div className={'flex-1'}>
         <SectionLabel label={'Customers - Age Group'}/>
         <ObjectWrapper>
-            <PieChart chartId={'customerAgeGroupChart'} chartData={chartData} totalValue={totalValue}/>
+            <PieChart chartData={chartData} totalValue={totalValue}/>
         </ObjectWrapper>
     </div>
 }

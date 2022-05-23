@@ -2,13 +2,11 @@ import {ResponsivePie} from '@nivo/pie'
 import {CHART_COLORS} from "@/config/colors";
 import calculator from "@/helpers/calculator";
 import {ChartDataInterface} from "@/interfaces/index";
+import {Datum} from "@nivo/legends";
 
 
-// @ts-ignore
-export default function PieChart({chartId, chartData: data, totalValue}:
-                                     { chartId : string, chartData: ChartDataInterface[], totalValue: number }) {
-
-
+export default function PieChart({chartData: data, totalValue}:
+                                     { chartData: ChartDataInterface[], totalValue: number }) {
 
     return (
         <div className='min-w-96 h-80 relative'>
@@ -20,7 +18,7 @@ export default function PieChart({chartId, chartData: data, totalValue}:
             </div>
             <ResponsivePie
                 data={data}
-                margin={{top: 0, right: 90, bottom: 0, left: 20}}
+                margin={{top: 30, right: 90, bottom: 30, left: 20}}
                 innerRadius={0.5}
                 sortByValue={true}
                 padAngle={1.5}
@@ -41,6 +39,13 @@ export default function PieChart({chartId, chartData: data, totalValue}:
                 }}
                 legends={[
                     {
+                        data: data.map((item, index) => {
+                            return {
+                                id: index,
+                                label: `${item.id}(${item.value})`,
+                                color: CHART_COLORS[index]
+                            }
+                        }),
                         anchor: 'right',
                         direction: 'column',
                         justify: false,

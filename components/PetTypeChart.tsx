@@ -38,7 +38,7 @@ export default function PetTypeChart() {
     return <div className={'flex-1'}>
         <SectionLabel label={'Pet - Types'}/>
         <ObjectWrapper>
-            <PieChart chartId={'petTypeChart'} chartData={chartData} totalValue={totalValue}/>
+            <PieChart chartData={chartData} totalValue={totalValue}/>
         </ObjectWrapper>
     </div>
 }
