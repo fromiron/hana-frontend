@@ -9,3 +9,14 @@ export const CHART_COLORS = ['#6c5dd3',
     '#e1def6',
     '#f0eefa',
     '#ffffff']
+
+
+export const COLORS = {
+    PRIMARY: 'primary',
+    SECONDARY: 'secondary',
+    WHITE: 'white',
+    BLACK: 'black',
+    ACCENT: 'accent',
+    MONO100: 'mono-100',
+    MONO200: 'mono-200'
+}

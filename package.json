@@ -24,7 +24,8 @@
     "react-query": "^3.39.0",
     "react-toastify": "^9.0.1",
     "recoil": "^0.7.2",
-    "typeit-react": "^2.4.3"
+    "typeit-react": "^2.4.3",
+    "usehooks-ts": "^2.5.3"
   },
   "devDependencies": {
     "@types/node": "17.0.25",

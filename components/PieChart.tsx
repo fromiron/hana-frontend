@@ -2,11 +2,21 @@ import {ResponsivePie} from '@nivo/pie'
 import {CHART_COLORS} from "@/config/colors";
 import calculator from "@/helpers/calculator";
 import {ChartDataInterface} from "@/interfaces/index";
-import {Datum} from "@nivo/legends";
+import {useInterval} from "usehooks-ts";
+import {useState} from "react";
 
 
 export default function PieChart({chartData: data, totalValue}:
                                      { chartData: ChartDataInterface[], totalValue: number }) {
+    const [renderNum, setRenderNum] = useState<number>(0);
+
+    useInterval(() => {
+        if (renderNum >= totalValue) {
+            return;
+        } else {
+            setRenderNum(renderNum + 1)
+        }
+    }, totalValue > 40? 30: 100)
 
     return (
         <div className='min-w-96 h-80 relative'>
@@ -14,7 +24,7 @@ export default function PieChart({chartData: data, totalValue}:
                 <div className='text-xs text-mono-200'>
                     total
                 </div>
-                <div className='text-center font-bold text-black'>{totalValue}</div>
+                <div className='text-center font-bold text-black'>{renderNum}</div>
             </div>
             <ResponsivePie
                 data={data}

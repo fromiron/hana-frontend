@@ -16,8 +16,6 @@ import {useRouter} from "next/router";
 import PageTitle from "@/components/partials/PageTitle";
 import {useRecoilState} from "recoil";
 import {pageState} from "@/store/index";
-import {GetStaticProps} from "next";
-import {API_URL} from "@/config/index";
 
 export default function Layout({title, keywords, description, children, pageTitle}: LayoutInterface) {
     const router = useRouter();
