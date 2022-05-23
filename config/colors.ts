@@ -1,4 +1,4 @@
-export const CHART_COLORS = ['#6c5dd3',
+export const PIE_CHART_COLORS = ['#6c5dd3',
     '#7a6dd7',
     '#b17ce9',
     '#b28bcb',
@@ -9,6 +9,10 @@ export const CHART_COLORS = ['#6c5dd3',
     '#e1def6',
     '#f0eefa',
     '#ffffff']
+
+export const LINE_CHART_COLORS = ['#6c5dd3',
+    '#ea92cf',
+]
 
 
 export const COLORS = {

@@ -1,5 +1,5 @@
 import {ResponsivePie} from '@nivo/pie'
-import {CHART_COLORS} from "@/config/colors";
+import {PIE_CHART_COLORS} from "@/config/colors";
 import calculator from "@/helpers/calculator";
 import {ChartDataInterface} from "@/interfaces/index";
 import {useInterval} from "usehooks-ts";
@@ -34,7 +34,7 @@ export default function PieChart({chartData: data, totalValue}:
                 padAngle={1.5}
                 cornerRadius={4}
                 activeOuterRadiusOffset={8}
-                colors={CHART_COLORS}
+                colors={PIE_CHART_COLORS}
                 enableArcLinkLabels={false}
                 arcLabel={(data) => `${calculator().percent(data.data.value, totalValue)}%`}
                 arcLabelsSkipAngle={20}
@@ -53,7 +53,7 @@ export default function PieChart({chartData: data, totalValue}:
                             return {
                                 id: index,
                                 label: `${item.id}(${item.value})`,
-                                color: CHART_COLORS[index]
+                                color: PIE_CHART_COLORS[index]
                             }
                         }),
                         anchor: 'right',
