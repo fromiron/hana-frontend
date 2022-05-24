@@ -11,9 +11,6 @@ import SectionLabel from "@/components/partials/SectionLabel";
 
 
 const MyResponsiveLine = ({data}: { data: any }) => (
-
-
-    // @ts-ignore
     <ResponsiveLine
         data={data}
         margin={{top: 50, right: 50, bottom: 50, left: 50}}
@@ -29,26 +26,10 @@ const MyResponsiveLine = ({data}: { data: any }) => (
         curve="catmullRom"
         axisTop={null}
         axisRight={null}
-        axisBottom={{
-            orient: 'bottom',
-            tickSize: 5,
-            tickPadding: 5,
-            tickRotation: 0,
-            legend: 'transportation',
-            legendOffset: 36,
-            legendPosition: 'middle'
-        }}
-        axisLeft={{
-            orient: 'left',
-            tickSize: 5,
-            tickPadding: 5,
-            tickRotation: 0,
-            legend: 'count',
-            legendOffset: -40,
-            legendPosition: 'middle'
-        }}
+        axisBottom={null}
         enableGridX={false}
-        colors={LINE_CHART_COLORS} lineWidth={4}
+        colors={LINE_CHART_COLORS}
+        lineWidth={4}
         pointSize={7}
         pointColor={{from: 'color', modifiers: []}}
         pointBorderWidth={6}
@@ -89,7 +70,6 @@ const OverviewPage: NextPage = () => {
     const data = [
         {
             "id": "japan",
-            "color": "hsl(169, 70%, 50%)",
             "data": [
                 {x: 1, y: 56}, {x: 2, y: 68},
                 {x: 3, y: 9}, {x: 4, y: 63},
@@ -111,7 +91,6 @@ const OverviewPage: NextPage = () => {
         },
         {
             "id": "france",
-            "color": "hsl(19, 70%, 50%)",
             "data": [
                 {x: 1, y: 40}, {x: 2, y: 1},
                 {x: 3, y: 28}, {x: 4, y: 87},
@@ -140,7 +119,7 @@ const OverviewPage: NextPage = () => {
             </div>
             <div className='grid overflow-hidden grid-cols-4 md:grid-cols-4 sm:grid-cols-1 auto-rows-auto gap-4'>
                 <Counter label={'Pet - Birth'} num={1} bgColor={COLORS.ACCENT} textColor={COLORS.WHITE}/>
-                <Counter label={'Pet - Dead'} num={5} bgColor={COLORS.BLACK} textColor={COLORS.WHITE}/>
+                <Counter label={'Pet - Dead'} num={5} bgColor={COLORS.BLACK} textColor={COLORS.MONO100}/>
                 <Counter label={'Customer - Total'} num={15} bgColor={COLORS.PRIMARY} textColor={COLORS.WHITE}/>
                 <Counter label={'Karte - Toal'} num={30} bgColor={COLORS.PRIMARY} textColor={COLORS.WHITE}/>
                 <Counter label={'Reservation - Last Month'} num={5} bgColor={COLORS.PRIMARY} textColor={COLORS.WHITE}/>

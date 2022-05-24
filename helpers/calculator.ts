@@ -1,5 +1,3 @@
-import {ChartDataInterface} from "@/components/PetTypeChart";
-
 export default function calculator() {
     function percent(value: number, totalValue: number) {
         console.log(value, totalValue)

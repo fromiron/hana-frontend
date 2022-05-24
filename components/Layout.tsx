@@ -7,7 +7,8 @@ import {
     MdOutlinePets,
     MdCalendarToday,
     MdSettings,
-    MdOutlineRedo
+    MdOutlineRedo,
+    MdFolderOpen
 } from "react-icons/md";
 import Image from "next/image";
 import IconMenuItem from "@/components/partials/IconMenuItem";
@@ -57,8 +58,12 @@ export default function Layout({title, keywords, description, children, pageTitl
                             <IconMenuItem Icon={MdCalendarToday} onClick={() => handleRoute('/cms/reservations')}
                                           title={'Reservations'} page={page}/>
 
+                            <IconMenuItem Icon={MdFolderOpen} onClick={() => handleRoute('/cms/karte')}
+                                          title={'Karte'} page={page}/>
+
                             <IconMenuItem Icon={MdSettings} onClick={() => handleRoute('/cms/settings')}
                                           title={'Settings'} page={page}/>
+
                         </ul>
                         <div className='border-b border-mono-100'/>
                         <div className='mt-10 text-xs text-mono-200'>
