@@ -1,5 +1,4 @@
 import {PetInterface} from "@/interfaces/petInterface";
-import exp from "constants";
 
 export interface CustomerInterface {
     id: number;

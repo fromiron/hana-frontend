@@ -9,15 +9,18 @@ import Image from "next/image";
 import {BACK_END_DEFAULT_URL} from "@/config/index";
 import Button from "@/components/partials/Button";
 import LoadIndicator from "@/components/LoadIndicator";
-import {CustomerInterface,  SexFilterInterface} from "@/interfaces/customerInterface";
+import {CustomerInterface, SexFilterInterface} from "@/interfaces/customerInterface";
 import {IconContainer, SexIcon} from "@/components/partials/Icon";
-import debugConsole from "@/helpers/debugConsole";
 import {TableItem, TableRow} from "@/components/partials/TableParts";
 import Pagination from "@/components/Pagination";
 import SectionLabel from "@/components/partials/SectionLabel";
 import CheckBox from "@/components/partials/Checkbox";
 import Table from "@/components/Table";
 import {PetInterface} from "@/interfaces/petInterface";
+import CustomerModal from "@/components/CustomerModal";
+import SmallButton from "@/components/partials/SmallButton";
+import {CgDetailsMore} from "react-icons/cg";
+import {queryClient} from "../../../react-query/queryClient";
 
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -80,19 +83,34 @@ const CustomersPage: NextPage = () => {
     const [searchText, setSearchText] = useState('')
     const [pageCount, setPageCount] = useState(1);
     const [customers, setCustomers] = useState<CustomerInterface[]>([])
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const page = useRef(DEFAULT_PAGE_NUMBER)
     const pageSize = useRef(DEFAULT_PAGE_SIZE)
     const sexFilter = useRef<SexFilterInterface>(DEFAULT_SEX_FILTER_OPTIONS);
     const sortFilter = useRef<string>('id:asc');
+    const selectedCustomerId = useRef<number | null>(null);
+
+    const todoKeys = {
+        all: ['todos'] as const,
+        lists: () => [...todoKeys.all, 'list'] as const,
+        list: (filters: string) => [...todoKeys.lists(), {filters}] as const,
+        details: () => [...todoKeys.all, 'detail'] as const,
+        detail: (id: number) => [...todoKeys.details(), id] as const,
+    }
+
     const {
         isLoading,
         isError,
         refetch
-    } = useQuery(queryKeys.customers, () => getCustomers(queryString).then(r => r.json()), {
+    } = useQuery([queryKeys.customers, 'list'], () => getCustomers(queryString).then(r => r.json()), {
         onSuccess:
             (res) => {
-                setCustomers(res.data);
-                setPageCount(res.meta.pagination.pageCount);
+                if (res.data) {
+                    setCustomers(res.data);
+                    queryClient.setQueryData([queryKeys.customers, 'list'], res.data)
+                    res.data.map((previous: { id: unknown | string; }) => queryClient.setQueryData([queryKeys.customers, previous.id], previous));
+                    setPageCount(res.meta.pagination.pageCount);
+                }
             }
     });
     const setSortFilter = (sort: string) => {
@@ -108,6 +126,7 @@ const CustomersPage: NextPage = () => {
     const setSexFilter = (newFilter: SexFilterInterface) => {
         sexFilter.current = newFilter;
     }
+
 
     useEffect(() => {
         (async function () {
@@ -227,6 +246,11 @@ const CustomersPage: NextPage = () => {
         })
     }
 
+    const handleModalOpen = (customerId: number|null) => {
+        selectedCustomerId.current = customerId;
+        setIsModalOpen(customerId!==null);
+    }
+
 
     if (isLoading) {
         return <Layout pageTitle={'Customers'}>
@@ -247,7 +271,8 @@ const CustomersPage: NextPage = () => {
         'Mail',
         'Address',
         'Tel',
-        'Pets'
+        'Pets',
+        'View'
     ]
 
     const customerList = customers?.map((customer: CustomerInterface) => (
@@ -269,12 +294,14 @@ const CustomersPage: NextPage = () => {
                     </IconContainer>
                 )}</div>
             </TableItem>
+            <TableItem><SmallButton Icon={CgDetailsMore} onClick={()=>handleModalOpen(customer.id)}/></TableItem>
         </TableRow>
     ))
 
 
     return (
         <Layout title={'Customers - Rabbit Sitter Hana'} pageTitle={'Customers'}>
+            <CustomerModal isOpen={isModalOpen} onClick={()=>handleModalOpen(null)} customerId={selectedCustomerId.current}/>
             <SectionLabel label={'Filters'}/>
             <div className='flex'>
                 <select onChange={handleSort} className='w-fit p-2 rounded-lg bg-mono-100

@@ -16,7 +16,6 @@ const LoginPage: NextPage = () => {
         passwordError: false,
         emailError: false
     });
-    const [isLoading, setIsLoading] = React.useState(false);
     const {login} = useAuth();
 
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {

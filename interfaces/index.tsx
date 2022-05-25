@@ -14,9 +14,10 @@ export interface LayoutInterface extends AccountInterface {
 }
 
 export interface InputInterface {
-    Icon: IconType,
+    Icon?: IconType,
+    prefix?:string,
     name: string,
-    value: string,
+    value?: string,
     placeholder: string,
     type: string,
     isError: boolean,
@@ -24,8 +25,10 @@ export interface InputInterface {
 }
 
 export interface ButtonInterface {
-    title: string,
-    onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+    title?: string,
+    Icon?: IconType,
+    onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+    bgColor?: string
 }
 
 export interface loginApiPropsInterface {
@@ -48,7 +51,7 @@ export interface loginPropsInterface {
 export interface IconMenuInterface {
     Icon: IconType,
     title: string,
-    page: string|null,
+    page: string | null,
     onClick: React.MouseEventHandler<HTMLLIElement>
 }
 

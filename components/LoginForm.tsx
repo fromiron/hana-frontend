@@ -1,4 +1,4 @@
-import Input from "@/components/partials/Input";
+import {LoginInput} from "@/components/partials/Input";
 import {MdAlternateEmail, MdLock} from "react-icons/md";
 import React from "react";
 import Button from "@/components/partials/Button";
@@ -13,11 +13,11 @@ export default function LoginForm({loginFormData, handleEmailChange, handlePassw
             <div className='flex justify-center flex-col mt-2 mb-10 text-center'>
                 <Image src={Logo} alt="logo"/>
             </div>
-            <Input Icon={MdAlternateEmail} type={'email'} name={'email'} value={loginFormData.email}
+            <LoginInput Icon={MdAlternateEmail} type={'email'} name={'email'} value={loginFormData.email}
                    isError={loginFormData.emailError}
                    placeholder={'rabbitsitter@hana.com'}
                    onChange={handleEmailChange}/>
-            <Input Icon={MdLock} type={'password'} name={'password'} value={loginFormData.password}
+            <LoginInput Icon={MdLock} type={'password'} name={'password'} value={loginFormData.password}
                    isError={loginFormData.passwordError}
                    placeholder={'● ● ● ● ● ●'}
                    onChange={handlePasswordChange}/>

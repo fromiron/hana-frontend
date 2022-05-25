@@ -18,8 +18,8 @@ export const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
             onError: queryErrorHandler,
-            staleTime: 2000,
-            cacheTime: 3000,
+            staleTime: 1000 * 60, //1分
+            cacheTime: 1000 * 60 * 60, //キャッシュ保存時間1時間
             refetchOnMount: false,
             refetchOnReconnect: false,
             refetchOnWindowFocus: false,
