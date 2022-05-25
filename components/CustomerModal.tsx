@@ -15,15 +15,25 @@ interface CustomerModalInterface {
 }
 
 function CustomerForm({defaultValue}: { defaultValue: CustomerInterface | undefined }) {
-    const {register, handleSubmit, control} = useForm();
+    const customerId = defaultValue?.id;
+    const data = defaultValue?.attributes;
+    const {register, handleSubmit, control, setValue} = useForm({defaultValues:data});
     const [isDisable, setIsDisable] = useState<boolean>(true);
+    const [selectedSexId, setSelectedSexId] = useState<number>(data?.sex?.data?.id??3);
 
     const onSubmit = (data: any) => console.log(data);
     const handleOnChange = () => {
 
     };
-    const customerId = defaultValue?.id;
-    const data = defaultValue?.attributes;
+    useEffect(()=>{
+        setValue('sex.data.id', selectedSexId);
+    },[])
+
+    const handleSexFormState=(sexId:number)=>{
+        setSelectedSexId(sexId);
+        setValue('sex.data.id', sexId);
+    }
+
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} onChange={handleOnChange}>
@@ -43,18 +53,16 @@ function CustomerForm({defaultValue}: { defaultValue: CustomerInterface | undefi
                     </div>
                 </div>
 
+
                 <div className='flex flex-col mb-4'>
                     <label htmlFor='sex' className='text-sm mb-1'>性別</label>
                     <div className='grid grid-cols-3 gap-10 px-10 py-4 bg-mono-100 rounded'>
-                        <SmallButton onClick={() => {
-                        }} title={'男性'} disabled={isDisable}
-                                     bgColor={data?.sex.data.id !== 1 ? 'bg-mono-200' : undefined}/>
-                        <SmallButton onClick={() => {
-                        }} title={'女性'} disabled={isDisable}
-                                     bgColor={data?.sex.data.id !== 2 ? 'bg-mono-200' : undefined}/>
-                        <SmallButton onClick={() => {
-                        }} title={'別姓'} disabled={isDisable}
-                                     bgColor={data?.sex.data.id !== 3 ? 'bg-mono-200' : undefined}/>
+                        <SmallButton onClick={() => handleSexFormState(1)} title={'男性'} disabled={isDisable}
+                                     bgColor={selectedSexId !== 1 ? 'bg-mono-200' : undefined}/>
+                        <SmallButton onClick={() => handleSexFormState(2)} title={'女性'} disabled={isDisable}
+                                     bgColor={selectedSexId !== 2 ? 'bg-mono-200' : undefined}/>
+                        <SmallButton onClick={() => handleSexFormState(3)} title={'別姓'} disabled={isDisable}
+                                     bgColor={selectedSexId !== 3 ? 'bg-mono-200' : undefined}/>
                     </div>
                 </div>
 
@@ -94,12 +102,12 @@ function CustomerForm({defaultValue}: { defaultValue: CustomerInterface | undefi
 
             <div
                 className="flex flex-row items-center justify-between mt-6 pt-6 bg-white border-t border-mono-100 rounded-bl-lg rounded-br-lg">
-                {/*<div className='w-24 mr-4'>*/}
-                {/*    <SmallButton title={'Delete'} bgColor={'bg-mono-200'} onClick={() => {*/}
-                {/*    }}/>*/}
-                {/*</div>*/}
+
                 <div className='w-24'>
-                    <SmallButton title={'Edit'} onClick={() => setIsDisable(!isDisable)}/>
+                    <SmallButton title={'修正'} onClick={() => setIsDisable(!isDisable)}/>
+                </div>
+                <div>
+                    <SmallButton title={'アップデート'} bgColor={isDisable?'bg-mono-200':'bg-accent'}  disabled={isDisable} type={'submit'}/>
                 </div>
 
             </div>
