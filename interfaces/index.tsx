@@ -28,7 +28,8 @@ export interface ButtonInterface {
     title?: string,
     Icon?: IconType,
     onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
-    bgColor?: string
+    bgColor?: string,
+    disabled?:boolean
 }
 
 export interface loginApiPropsInterface {

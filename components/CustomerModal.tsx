@@ -14,10 +14,13 @@ interface CustomerModalInterface {
     customerId: number | null,
 }
 
-function CustomerForm({defaultValue, isDisable}: { defaultValue: CustomerInterface | undefined, isDisable: boolean }) {
+function CustomerForm({defaultValue}: { defaultValue: CustomerInterface | undefined }) {
     const {register, handleSubmit, control} = useForm();
+    const [isDisable, setIsDisable] = useState<boolean>(true);
+
     const onSubmit = (data: any) => console.log(data);
     const handleOnChange = () => {
+
     };
     const customerId = defaultValue?.id;
     const data = defaultValue?.attributes;
@@ -25,7 +28,6 @@ function CustomerForm({defaultValue, isDisable}: { defaultValue: CustomerInterfa
     return (
         <form onSubmit={handleSubmit(onSubmit)} onChange={handleOnChange}>
             <div className='flex flex-col text-black'>
-
                 <div className='flex w-full'>
                     <div className='flex flex-col mb-4 mr-4 flex-1'>
                         <label htmlFor='kanji' className='text-sm mb-1'>漢字</label>
@@ -45,11 +47,14 @@ function CustomerForm({defaultValue, isDisable}: { defaultValue: CustomerInterfa
                     <label htmlFor='sex' className='text-sm mb-1'>性別</label>
                     <div className='grid grid-cols-3 gap-10 px-10 py-4 bg-mono-100 rounded'>
                         <SmallButton onClick={() => {
-                        }} title={'男性'}/>
+                        }} title={'男性'} disabled={isDisable}
+                                     bgColor={data?.sex.data.id !== 1 ? 'bg-mono-200' : undefined}/>
                         <SmallButton onClick={() => {
-                        }} title={'男性'} bgColor={'bg-mono-200'}/>
+                        }} title={'女性'} disabled={isDisable}
+                                     bgColor={data?.sex.data.id !== 2 ? 'bg-mono-200' : undefined}/>
                         <SmallButton onClick={() => {
-                        }} title={'男性'} bgColor={'bg-mono-200'}/>
+                        }} title={'別姓'} disabled={isDisable}
+                                     bgColor={data?.sex.data.id !== 3 ? 'bg-mono-200' : undefined}/>
                     </div>
                 </div>
 
@@ -86,17 +91,26 @@ function CustomerForm({defaultValue, isDisable}: { defaultValue: CustomerInterfa
                           className={`outline-none p-2 rounded border border-solid ${isDisable ? 'border-mono-100' : 'bg-white'} border-mono-100 border-4 bg-mono-100 transition duration-500 focus:border-primary`}
                           defaultValue={data?.note} disabled={isDisable}/>
             </div>
+
+            <div
+                className="flex flex-row items-center justify-between mt-6 pt-6 bg-white border-t border-mono-100 rounded-bl-lg rounded-br-lg">
+                {/*<div className='w-24 mr-4'>*/}
+                {/*    <SmallButton title={'Delete'} bgColor={'bg-mono-200'} onClick={() => {*/}
+                {/*    }}/>*/}
+                {/*</div>*/}
+                <div className='w-24'>
+                    <SmallButton title={'Edit'} onClick={() => setIsDisable(!isDisable)}/>
+                </div>
+
+            </div>
+
             {DEBUG_CONSOLE_ON && <DevTool control={control}/>}
+
         </form>
     );
 }
 
 export default function CustomerModal({isOpen, onClick, customerId}: CustomerModalInterface) {
-    const [isDisable, setIsDisable] = useState<boolean>(true);
-    useEffect(()=>{
-        setIsDisable(true)
-    },[customerId])
-
 
     if (!customerId) {
         return <></>
@@ -118,20 +132,9 @@ export default function CustomerModal({isOpen, onClick, customerId}: CustomerMod
                         </div>
                     </div>
                     <div className={'h-auto bg-white p-8'}>
-                        <CustomerForm defaultValue={customer} isDisable={isDisable}/>
+                        <CustomerForm defaultValue={customer}/>
                     </div>
 
-                    <div
-                        className="flex flex-row items-center justify-between p-5 bg-white border-t border-mono-100 rounded-bl-lg rounded-br-lg">
-                        {/*<div className='w-24 mr-4'>*/}
-                        {/*    <SmallButton title={'Delete'} bgColor={'bg-mono-200'} onClick={() => {*/}
-                        {/*    }}/>*/}
-                        {/*</div>*/}
-                        <div className='w-24'>
-                            <SmallButton title={'Edit'} onClick={() => setIsDisable(!isDisable)}/>
-                        </div>
-
-                    </div>
                 </div>
             </div>
 
