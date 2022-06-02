@@ -17,7 +17,6 @@ import SectionLabel from "@/components/partials/SectionLabel";
 import CheckBox from "@/components/partials/Checkbox";
 import Table from "@/components/Table";
 import {PetInterface} from "@/interfaces/petInterface";
-import CustomerModal from "@/components/CustomerModal";
 import SmallButton from "@/components/partials/SmallButton";
 import {CgDetailsMore} from "react-icons/cg";
 import {queryClient} from "../../../react-query/queryClient";
@@ -29,9 +28,8 @@ import {
     CUSTOMER_PAGE_SIZE_LIST,
     CUSTOMER_SORT_LIST,
 } from "./query_config";
-import ModalProvider from "@/components/ModalProvider";
-import {a} from "@react-spring/web";
-import CustomerModal2 from "@/components/CustomerModal2";
+import UseModal from "@/hooks/useModal";
+import CustomerModal from "@/components/CustomerModal";
 
 
 
@@ -41,13 +39,11 @@ const CustomersPage: NextPage = () => {
     const [searchText, setSearchText] = useState('')
     const [pageCount, setPageCount] = useState(1);
     const [customers, setCustomers] = useState<CustomerInterface[]>([])
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const page = useRef(CUSTOMER_DEFAULT_PAGE_NUMBER)
     const pageSize = useRef(CUSTOMER_DEFAULT_PAGE_SIZE)
     const sexFilter = useRef<SexFilterInterface>(CUSTOMER_DEFAULT_SEX_FILTER_OPTIONS);
     const sortFilter = useRef<string>('id:asc');
-    const selectedCustomerId = useRef<number | null>(null);
-    const {isOpen, modalOpen, ModalContainer} = ModalProvider();
+    const {modalOpen, ModalContainer} = UseModal();
 
 
     const todoKeys = {
@@ -206,11 +202,6 @@ const CustomersPage: NextPage = () => {
         })
     }
 
-    const handleModalOpen = (customerId: number|null) => {
-        selectedCustomerId.current = customerId;
-        setIsModalOpen(customerId!==null);
-    }
-
 
     if (isLoading) {
         return <Layout pageTitle={'Customers'}>
@@ -235,10 +226,10 @@ const CustomersPage: NextPage = () => {
         'View'
     ]
 
-    const handleModalOpen2 =async (customerId:number)=>{
+    const handleModalOpen =async (customerId:number)=>{
 
        await modalOpen(
-         <CustomerModal2 customerId={customerId} />
+         <CustomerModal customerId={customerId} />
         )
 
     }
@@ -264,7 +255,6 @@ const CustomersPage: NextPage = () => {
             </TableItem>
             <TableItem>
                 <SmallButton Icon={CgDetailsMore} onClick={()=>handleModalOpen(customer.id)}/>
-                <SmallButton Icon={CgDetailsMore} onClick={()=>handleModalOpen2(customer.id)}/>
             </TableItem>
         </TableRow>
     ))
@@ -272,7 +262,6 @@ const CustomersPage: NextPage = () => {
     return (
         <Layout title={'Customers - Rabbit Sitter Hana'} pageTitle={'Customers'}>
             <ModalContainer/>
-            <CustomerModal isOpen={isModalOpen} onClick={()=>handleModalOpen(null)} customerId={selectedCustomerId.current}/>
             <SectionLabel label={'Filters'}/>
             <div className='flex'>
                 <select onChange={handleSort} className='w-fit p-2 rounded-lg bg-mono-100

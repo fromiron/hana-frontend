@@ -1,4 +1,3 @@
-import {MdClose} from "react-icons/md";
 import SmallButton from "@/components/partials/SmallButton";
 import {queryClient} from "../react-query/queryClient";
 import {CustomerInterface} from "@/interfaces/customerInterface";
@@ -7,9 +6,11 @@ import React, {MouseEventHandler, useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {DevTool} from "@hookform/devtools";
 import {API_URL, DEBUG_CONSOLE_ON} from "@/config/index";
-import { motion } from "framer-motion";
 import {useMutation} from "react-query";
 import LoadIndicator from "@/components/LoadIndicator";
+import useModal from "@/hooks/useModal";
+import {MdClose} from "react-icons/md";
+import ModalCloseBtn from "@/components/partials/ModalCloseBtn";
 
 interface CustomerModalInterface {
     isOpen: boolean,
@@ -147,37 +148,25 @@ function CustomerForm({defaultValue}: { defaultValue: CustomerInterface | undefi
     );
 }
 
-export default function CustomerModal({isOpen, onClick, customerId}: CustomerModalInterface) {
-
+export default function CustomerModal({customerId}: {customerId: number }) {
     if (!customerId) {
         return <></>
     }
     const customer = queryClient.getQueryData<CustomerInterface>([queryKeys.customers, customerId]);
     const data = customer?.attributes;
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className={`${isOpen ? 'block' : 'hidden'} absolute z-50 top-0 right-0 bottom-0 left-0  backdrop-blur-sm overflow-auto`}>
-            <div className="flex justify-center h-screen items-center bg-gray-200 antialiased">
                 <div
-                    className="flex flex-col w-11/12 sm:w-5/6 lg:w-1/2 max-w-2xl mx-auto rounded shadow-xl">
+                    className="flex flex-col w-11/12 sm:w-5/6 lg:w-1/2 max-w-2xl mx-auto rounded-lg overflow-hidden shadow-xl">
                     <div
-                        className="flex flex-row justify-between items-center p-4 bg-primary rounded-tl-lg rounded-tr-lg bg-[url('/bar_bg.png')] bg-no-repeat bg-right">
+                        className="flex flex-row justify-between items-center p-4 bg-primary bg-[url('/bar_bg.png')] bg-no-repeat bg-right">
                         <p className="font-semibold text-white">{data?.kanji ? data?.kanji : data?.kana} 様</p>
-                        <div
-                            className='cursor-pointer transition duration-500 text-primary rounded hover:text-white hover:bg-primary'>
-                            <MdClose size={23} onClick={onClick}/>
-                        </div>
+                       <ModalCloseBtn confirm={false}/>
                     </div>
                     <div className={'h-auto bg-white p-8'}>
                         <CustomerForm defaultValue={customer}/>
                     </div>
 
                 </div>
-            </div>
 
-        </motion.div>
     )
 }
