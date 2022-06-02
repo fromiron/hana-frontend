@@ -147,7 +147,7 @@ function CustomerForm({defaultValue}: { defaultValue: CustomerInterface | undefi
     );
 }
 
-export default function CustomerModal({isOpen, onClick, customerId}: CustomerModalInterface) {
+export default function CustomerModal2({customerId}: {customerId: number }) {
 
     if (!customerId) {
         return <></>
@@ -155,11 +155,7 @@ export default function CustomerModal({isOpen, onClick, customerId}: CustomerMod
     const customer = queryClient.getQueryData<CustomerInterface>([queryKeys.customers, customerId]);
     const data = customer?.attributes;
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className={`${isOpen ? 'block' : 'hidden'} absolute z-50 top-0 right-0 bottom-0 left-0  backdrop-blur-sm overflow-auto`}>
+
             <div className="flex justify-center h-screen items-center bg-gray-200 antialiased">
                 <div
                     className="flex flex-col w-11/12 sm:w-5/6 lg:w-1/2 max-w-2xl mx-auto rounded shadow-xl">
@@ -168,7 +164,6 @@ export default function CustomerModal({isOpen, onClick, customerId}: CustomerMod
                         <p className="font-semibold text-white">{data?.kanji ? data?.kanji : data?.kana} 様</p>
                         <div
                             className='cursor-pointer transition duration-500 text-primary rounded hover:text-white hover:bg-primary'>
-                            <MdClose size={23} onClick={onClick}/>
                         </div>
                     </div>
                     <div className={'h-auto bg-white p-8'}>
@@ -177,7 +172,5 @@ export default function CustomerModal({isOpen, onClick, customerId}: CustomerMod
 
                 </div>
             </div>
-
-        </motion.div>
     )
 }

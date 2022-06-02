@@ -7,18 +7,21 @@ import loadingAnimation from '@/public/lottile/loading_animation.json';
 
 export default function LoadIndicator() {
 
-    return <div className={'w-full h-full flex flex-col justify-center '}><Player
+    return <div className={'w-full h-full flex flex-col justify-center'}>
+        <Player
         autoplay
         loop
         src={loadingAnimation}
         style={
             {
+                backgroundColor:'#f6f6f6',
+                borderRadius: '0.25rem',
                 width: '100%',
                 height: '100%',
                 maxWidth:'300px',
                 maxHeight:'300px',
-                marginBottom:'300px',
             }
         }
-    /></div>
+    />
+    </div>
 }

@@ -28,7 +28,7 @@ export interface ButtonInterface {
     title?: string,
     Icon?: IconType,
     type?:"button" | "submit" | "reset" | undefined,
-    onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+    onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void | void,
     bgColor?: string,
     disabled?:boolean
 }

@@ -6,7 +6,6 @@ import {ReactQueryDevtools} from 'react-query/devtools';
 import {queryClient} from "../react-query/queryClient";
 
 function MyApp({Component, pageProps}: AppProps) {
-
     return (
         <QueryClientProvider
             client={queryClient}>

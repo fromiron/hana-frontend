@@ -21,74 +21,34 @@ import CustomerModal from "@/components/CustomerModal";
 import SmallButton from "@/components/partials/SmallButton";
 import {CgDetailsMore} from "react-icons/cg";
 import {queryClient} from "../../../react-query/queryClient";
+import {
+    CUSTOMER_DEFAULT_PAGE_NUMBER,
+    CUSTOMER_DEFAULT_PAGE_SIZE,
+    CUSTOMER_DEFAULT_QUERY,
+    CUSTOMER_DEFAULT_QUERY_STRING, CUSTOMER_DEFAULT_SEX_FILTER_OPTIONS,
+    CUSTOMER_PAGE_SIZE_LIST,
+    CUSTOMER_SORT_LIST,
+} from "./query_config";
+import ModalProvider from "@/components/ModalProvider";
+import {a} from "@react-spring/web";
+import CustomerModal2 from "@/components/CustomerModal2";
 
 
-const DEFAULT_PAGE_SIZE = 10;
-const DEFAULT_PAGE_NUMBER = 1;
-const DEFAULT_QUERY = {
-    populate: {
-        age_group: {
-            fields: ['group'],
-        },
-        sex: {
-            fields: ['sex'],
-        },
-        pets: {
-            populate: {
-                type: {
-                    fields: ['type'],
-                    populate: '*'
-                },
-            },
 
-        }
-    },
-    filters: {
-        sex: {
-            sex: {$eq: ['male', 'female', 'other']}
-        },
-        deleted_at: {
-            $null: true,
-        },
-    },
-    pagination: {
-        page: DEFAULT_PAGE_NUMBER,
-        pageSize: DEFAULT_PAGE_SIZE,
-    },
-    sort: ['id:asc']
-}
-
-const DEFAULT_QUERY_STRING = qs.stringify(DEFAULT_QUERY, {
-    encodeValuesOnly: true,
-})
-
-
-const DEFAULT_SEX_FILTER_OPTIONS: SexFilterInterface = {
-    male: true,
-    female: true,
-    other: true
-}
-const SORT_LIST = [
-    ['id:asc', 'ID昇順'],
-    ['id:desc', 'ID降順'],
-    ['age_group.id:asc', '年齢昇順'],
-    ['age_group.id:desc', '年齢降順'],
-]
-const PAGE_SIZE_LIST = [
-    10, 20, 50
-]
 
 const CustomersPage: NextPage = () => {
-    const [queryString, setQueryString] = useState(DEFAULT_QUERY_STRING)
+    const [queryString, setQueryString] = useState(CUSTOMER_DEFAULT_QUERY_STRING)
     const [searchText, setSearchText] = useState('')
     const [pageCount, setPageCount] = useState(1);
     const [customers, setCustomers] = useState<CustomerInterface[]>([])
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const page = useRef(DEFAULT_PAGE_NUMBER)
-    const pageSize = useRef(DEFAULT_PAGE_SIZE)
-    const sexFilter = useRef<SexFilterInterface>(DEFAULT_SEX_FILTER_OPTIONS);
+    const page = useRef(CUSTOMER_DEFAULT_PAGE_NUMBER)
+    const pageSize = useRef(CUSTOMER_DEFAULT_PAGE_SIZE)
+    const sexFilter = useRef<SexFilterInterface>(CUSTOMER_DEFAULT_SEX_FILTER_OPTIONS);
     const sortFilter = useRef<string>('id:asc');
     const selectedCustomerId = useRef<number | null>(null);
+    const {isOpen, modalOpen, ModalContainer} = ModalProvider();
+
 
     const todoKeys = {
         all: ['todos'] as const,
@@ -162,7 +122,7 @@ const CustomersPage: NextPage = () => {
                 sexEq = ['']
             }
             const newQuery = {
-                ...DEFAULT_QUERY,
+                ...CUSTOMER_DEFAULT_QUERY,
                 filters: {
                     sex: {
                         sex: {
@@ -216,11 +176,11 @@ const CustomersPage: NextPage = () => {
 
     const resetFilter = async () => {
         new Promise<void>(resolve => {
-            setPageSize(DEFAULT_PAGE_SIZE);
+            setPageSize(CUSTOMER_DEFAULT_PAGE_SIZE);
             setSortFilter('id:asc')
             setSearchText('');
-            setSexFilter(DEFAULT_SEX_FILTER_OPTIONS)
-            setQueryString(DEFAULT_QUERY_STRING);
+            setSexFilter(CUSTOMER_DEFAULT_SEX_FILTER_OPTIONS)
+            setQueryString(CUSTOMER_DEFAULT_QUERY_STRING);
             resolve();
         }).then(() => {
             handleQuery()
@@ -275,6 +235,14 @@ const CustomersPage: NextPage = () => {
         'View'
     ]
 
+    const handleModalOpen2 =async (customerId:number)=>{
+
+       await modalOpen(
+         <CustomerModal2 customerId={customerId} />
+        )
+
+    }
+
     const customerList = customers?.map((customer: CustomerInterface) => (
         <TableRow key={customer.id}>
             <TableItem>{customer.id}</TableItem>
@@ -294,20 +262,23 @@ const CustomersPage: NextPage = () => {
                     </IconContainer>
                 )}</div>
             </TableItem>
-            <TableItem><SmallButton Icon={CgDetailsMore} onClick={()=>handleModalOpen(customer.id)}/></TableItem>
+            <TableItem>
+                <SmallButton Icon={CgDetailsMore} onClick={()=>handleModalOpen(customer.id)}/>
+                <SmallButton Icon={CgDetailsMore} onClick={()=>handleModalOpen2(customer.id)}/>
+            </TableItem>
         </TableRow>
     ))
 
-
     return (
         <Layout title={'Customers - Rabbit Sitter Hana'} pageTitle={'Customers'}>
+            <ModalContainer/>
             <CustomerModal isOpen={isModalOpen} onClick={()=>handleModalOpen(null)} customerId={selectedCustomerId.current}/>
             <SectionLabel label={'Filters'}/>
             <div className='flex'>
                 <select onChange={handleSort} className='w-fit p-2 rounded-lg bg-mono-100
                    transition duration-500 border-2 border-mono-100 w-fit bg-mono-100 focus:outline-none
                     focus:border-primary focus:bg-white rounded p-3 text-black mr-4'>
-                    {SORT_LIST.map(([value, label]) => (
+                    {CUSTOMER_SORT_LIST.map(([value, label]) => (
                         <option key={value} selected={sortFilter.current === value} value={value}>{label}</option>
                     ))}
                 </select>
@@ -326,7 +297,7 @@ const CustomersPage: NextPage = () => {
                     <select onChange={changePageSize} className='w-fit p-2 rounded-lg bg-mono-100
                    transition duration-500 border-2 border-mono-100 w-fit bg-mono-100 focus:outline-none
                     focus:border-primary focus:bg-white rounded p-3 text-black mr-4'>
-                        {PAGE_SIZE_LIST.map((value) => (
+                        {CUSTOMER_PAGE_SIZE_LIST.map((value) => (
                             <option key={value} selected={pageSize.current === value} value={value}>{value}個</option>
                         ))}
                     </select>

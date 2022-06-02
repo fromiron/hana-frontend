@@ -6,3 +6,7 @@ export const pageState = atom<string>({
     default: '',
 });
 
+export const modalState = atom<boolean>({
+    key: 'modalState',
+    default: false,
+});
