@@ -3,7 +3,7 @@ import {FaGenderless} from "react-icons/fa";
 import React from "react";
 
 export const IconContainer = ({children}: any) => <div
-    className='text-xs rounded min-h-fit h-auto flex justify-center p-1 bg-mono-100 mr-2'>{children}</div>;
+    className='text-xs rounded items-center h-8 flex justify-center bg-mono-100 aspect-square'>{children}</div>;
 export const SexIcon = (sex: string) => {
     if (sex === 'male') {
         return <IconContainer><MdMale color={'#345eeb'}/></IconContainer>

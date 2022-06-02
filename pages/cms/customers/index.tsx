@@ -30,6 +30,7 @@ import {
 } from "./query_config";
 import UseModal from "@/hooks/useModal";
 import CustomerModal from "@/components/CustomerModal";
+import dateConvertor from "@/helpers/dateConvertor";
 
 
 
@@ -223,7 +224,8 @@ const CustomersPage: NextPage = () => {
         'Address',
         'Tel',
         'Pets',
-        'View'
+        'View',
+        'Updated'
     ]
 
     const handleModalOpen =async (customerId:number)=>{
@@ -239,7 +241,7 @@ const CustomersPage: NextPage = () => {
             <TableItem>{customer.id}</TableItem>
             <TableItem>{`${customer.attributes?.kanji}(${customer.attributes?.kana})`}</TableItem>
             <TableItem>{customer.attributes?.age_group?.data?.attributes?.group}</TableItem>
-            <TableItem>{SexIcon(customer.attributes?.sex?.data?.attributes?.sex)}</TableItem>
+            <TableItem className='flex justify-center'>{SexIcon(customer.attributes?.sex?.data?.attributes?.sex)}</TableItem>
             <TableItem>{customer.attributes?.email}</TableItem>
             <TableItem>{customer.attributes?.address}</TableItem>
             <TableItem>{customer.attributes?.phone}</TableItem>
@@ -256,6 +258,7 @@ const CustomersPage: NextPage = () => {
             <TableItem>
                 <SmallButton Icon={CgDetailsMore} onClick={()=>handleModalOpen(customer.id)}/>
             </TableItem>
+            <TableItem>{dateConvertor().datetimeToString(customer.attributes?.updatedAt)}</TableItem>
         </TableRow>
     ))
 
