@@ -20,7 +20,6 @@ export default function useModal() {
 
     const ModalContainer = () => {
         return <ReactModal isOpen={isOpen}
-
                            style={{
                                overlay: {
                                    position: 'fixed',
@@ -40,10 +39,10 @@ export default function useModal() {
                                    backgroundColor: 'rgba(0,0,0,0.2)',
                                    WebkitOverflowScrolling: 'touch',
                                    outline: 'none',
+                                   paddingTop:100
                                }
                            }}
         >
-            <button onClick={modalClose} className='bg-mono-200 text-white p-3 m-3'>close</button>
             {renderComponent}
         </ReactModal>
     }

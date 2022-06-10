@@ -33,8 +33,6 @@ import CustomerModal from "@/components/CustomerModal";
 import dateConvertor from "@/helpers/dateConvertor";
 
 
-
-
 const CustomersPage: NextPage = () => {
     const [queryString, setQueryString] = useState(CUSTOMER_DEFAULT_QUERY_STRING)
     const [searchText, setSearchText] = useState('')
@@ -228,10 +226,10 @@ const CustomersPage: NextPage = () => {
         'Updated'
     ]
 
-    const handleModalOpen =async (customerId:number)=>{
+    const handleModalOpen = async (customerId: number) => {
 
-       await modalOpen(
-         <CustomerModal customerId={customerId} />
+        await modalOpen(
+            <CustomerModal customerId={customerId}/>
         )
 
     }
@@ -241,22 +239,39 @@ const CustomersPage: NextPage = () => {
             <TableItem>{customer.id}</TableItem>
             <TableItem>{`${customer.attributes?.kanji}(${customer.attributes?.kana})`}</TableItem>
             <TableItem>{customer.attributes?.age_group?.data?.attributes?.group}</TableItem>
-            <TableItem className='flex justify-center'>{SexIcon(customer.attributes?.sex?.data?.attributes?.sex)}</TableItem>
+            <TableItem
+                className='flex justify-center'>{SexIcon(customer.attributes?.sex?.data?.attributes?.sex)}</TableItem>
             <TableItem>{customer.attributes?.email}</TableItem>
             <TableItem>{customer.attributes?.address}</TableItem>
             <TableItem>{customer.attributes?.phone}</TableItem>
-            <TableItem>
-                <div className='flex'>{customer.attributes?.pets?.data.map(
-                    (pet: PetInterface) => <IconContainer key={pet.id}>
-                        <Image alt='pet_icon'
-                               src={BACK_END_DEFAULT_URL + pet.attributes?.type?.data?.attributes.icon.data.attributes.url}
-                               width={20}
-                               height={20}/>
-                    </IconContainer>
+            <TableItem className='flex justify-center'>
+                <div className='inline-grid grid-flow-col gap-1 auto-cols-max'>{customer.attributes?.pets?.data.map(
+                    (pet: PetInterface) => {
+                        return <div key={pet.id} className='group'>
+                            <div className='relative group-hover:block'>
+                                <IconContainer>
+                                    <Image alt='pet_icon'
+                                           src={BACK_END_DEFAULT_URL + pet.attributes?.type?.data?.attributes.icon.data.attributes.url}
+                                           width={20}
+                                           height={20}/>
+                                </IconContainer>
+                                <div className="absolute mx-2 hidden bottom-10 -left-2 group-hover:block">
+                                    <div className="bg-black text-white text-xs rounded py-1 px-4 right-0 bottom-full min-w-max">
+                                        {pet.attributes.name}
+                                        <svg className="absolute text-black h-2 left-0 ml-3 top-full" x="0px" y="0px"
+                                             viewBox="0 0 255 255" xmlSpace="preserve">
+                                            <polygon className="fill-current" points="0,0 127.5,127.5 255,0"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
                 )}</div>
             </TableItem>
             <TableItem>
-                <SmallButton Icon={CgDetailsMore} onClick={()=>handleModalOpen(customer.id)}/>
+                <SmallButton Icon={CgDetailsMore} onClick={() => handleModalOpen(customer.id)}/>
             </TableItem>
             <TableItem>{dateConvertor().datetimeToString(customer.attributes?.updatedAt)}</TableItem>
         </TableRow>
